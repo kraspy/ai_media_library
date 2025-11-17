@@ -1,0 +1,48 @@
+[project]
+name = "ai-media-library"
+version = "0.0.1"
+description = "Your AI Media Library"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+    "django>=5.2.8",
+    "django-debug-toolbar>=6.1.0",
+    "faker>=38.0.0",
+    "langchain>=1.0.7",
+    "langchain-chroma>=1.0.0",
+    "langchain-core>=1.0.5",
+    "langchain-deepseek>=1.0.1",
+    "langchain-openai>=1.0.3",
+    "rich>=14.2.0",
+    "whisperx>=3.7.4",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "psycopg2-binary>=2.9.11",
+    "pytest>=9.0.1",
+    "pytest-django>=4.11.1",
+]
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".vscode",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+]
+line-length = 79
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+line-ending = "auto"
