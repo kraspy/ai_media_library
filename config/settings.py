@@ -27,7 +27,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
-    # 'apps.library.apps.LibraryConfig',
+    'apps.library.apps.LibraryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -122,3 +122,11 @@ AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/auth/login/'
+
+# Celery
+CELERY_BROKER_URL = env(
+    'CELERY_BROKER_URL', default='redis://localhost:6379/0'
+)
+CELERY_RESULT_BACKEND = env(
+    'CELERY_RESULT_BACKEND', default='redis://localhost:6379/0'
+)
