@@ -130,3 +130,8 @@ CELERY_BROKER_URL = env(
 CELERY_RESULT_BACKEND = env(
     'CELERY_RESULT_BACKEND', default='redis://localhost:6379/0'
 )
+
+# WhisperX
+WHISPER_MODEL = env('WHISPER_MODEL_SIZE', default='large-v2')
+WHISPER_DEVICE = env('WHISPER_DEVICE', default='cuda')
+WHISPER_COMPUTE_TYPE = env('WHISPER_COMPUTE_TYPE', default='float16')

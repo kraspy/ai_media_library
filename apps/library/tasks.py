@@ -1,6 +1,9 @@
-import time
+import gc
 
+import torch
+import whisperx
 from celery import shared_task
+from django.conf import settings
 
 from .models import MediaItem
 
@@ -12,17 +15,29 @@ def transcribe_media(media_item_id):
         media_item.status = MediaItem.Status.PROCESSING
         media_item.save()
 
-        time.sleep(5)
+        device = settings.WHISPER_DEVICE
+        batch_size = 16
+        compute_type = settings.WHISPER_COMPUTE_TYPE
 
-        transcription = (
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-            'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
-            'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
-            'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. '
-            'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        model = whisperx.load_model(
+            settings.WHISPER_MODEL,
+            device,
+            compute_type=compute_type,
         )
 
-        media_item.transcription = transcription
+        audio = whisperx.load_audio(media_item.file.path)
+        result = model.transcribe(audio, batch_size=batch_size)
+
+        del model
+        gc.collect()
+        if device == 'cuda':
+            torch.cuda.empty_cache()
+
+        transcription_text = ''
+        for segment in result['segments']:
+            transcription_text += segment['text'] + '\n'
+
+        media_item.transcription = transcription_text.strip()
         media_item.status = MediaItem.Status.COMPLETED
         media_item.save()
 
