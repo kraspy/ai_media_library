@@ -8,3 +8,4 @@ class MediaItemAdmin(admin.ModelAdmin):
     list_display = ('title', 'media_type', 'status', 'user', 'created_at')
     list_filter = ('media_type', 'status', 'created_at')
     search_fields = ('title', 'user__username')
+    readonly_fields = ('created_at', 'transcription', 'summary')

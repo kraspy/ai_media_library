@@ -33,6 +33,7 @@ class MediaItem(models.Model):
         default=Status.PENDING,
     )
     transcription = models.TextField(blank=True)
+    summary = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

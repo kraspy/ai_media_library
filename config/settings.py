@@ -135,3 +135,7 @@ CELERY_RESULT_BACKEND = env(
 WHISPER_MODEL = env('WHISPER_MODEL_SIZE', default='large-v2')
 WHISPER_DEVICE = env('WHISPER_DEVICE', default='cuda')
 WHISPER_COMPUTE_TYPE = env('WHISPER_COMPUTE_TYPE', default='float16')
+
+# LLM
+OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
+OPENAI_MODEL = env('OPENAI_MODEL', default='gpt-4o-mini')
