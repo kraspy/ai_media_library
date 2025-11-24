@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.library.apps.LibraryConfig',
     'apps.core.apps.CoreConfig',
+    'taggit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,3 +143,6 @@ WHISPER_COMPUTE_TYPE = env('WHISPER_COMPUTE_TYPE', default='float16')
 # LLM
 OPENAI_API_KEY = env('OPENAI_API_KEY', default='')
 OPENAI_MODEL = env('OPENAI_MODEL', default='gpt-4o-mini')
+
+DEEPSEEK_API_KEY = env('DEEPSEEK_API_KEY', default='')
+DEEPSEEK_MODEL = env('DEEPSEEK_MODEL', default='deepseek-chat')
