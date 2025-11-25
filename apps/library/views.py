@@ -1,6 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
 from .models import MediaItem
 
@@ -59,3 +65,22 @@ class MediaUploadView(CreateView):
             analyze_media.delay(instance.id)
 
         return HttpResponseRedirect(self.success_url)
+
+
+class MediaDetailView(DetailView):
+    model = MediaItem
+    template_name = 'library/detail.html'
+    context_object_name = 'item'
+
+
+class MediaUpdateView(UpdateView):
+    model = MediaItem
+    fields = ['title', 'topic', 'tags']
+    template_name = 'library/update.html'
+    success_url = reverse_lazy('library:list')
+
+
+class MediaDeleteView(DeleteView):
+    model = MediaItem
+    template_name = 'library/delete.html'
+    success_url = reverse_lazy('library:list')

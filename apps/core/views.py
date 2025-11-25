@@ -11,7 +11,6 @@ class ProjectSettingsView(LoginRequiredMixin, UpdateView):
     fields = [
         'transcription_engine',
         'llm_provider',
-        'chat_prompt',
         'summarization_prompt',
     ]
     template_name = 'core/settings.html'

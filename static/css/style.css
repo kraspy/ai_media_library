@@ -1,0 +1,44 @@
+/* Containers */
+.container-auth {
+    max-width: 400px;
+}
+
+.container-delete {
+    max-width: 500px;
+}
+
+.container-form {
+    max-width: 600px;
+}
+
+.container-detail {
+    max-width: 800px;
+}
+
+.container-list {
+    max-width: 1200px;
+}
+
+/* Cards */
+.card-custom {
+    border-radius: 8px;
+}
+
+.error-log-card {
+    background-color: #2a1014;
+    border: 1px solid #dc3545;
+    border-radius: 8px;
+}
+
+/* Components */
+.transcription-box {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+}
+
+.text-small {
+    font-size: 0.85em;
+}

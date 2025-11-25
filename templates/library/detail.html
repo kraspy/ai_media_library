@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mx-auto my-4 container-detail">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">{{ item.title }}</h1>
+        <div>
+            <a href="{% url 'library:update' item.id %}" class="btn btn-warning me-2">Edit</a>
+            <a href="{% url 'library:delete' item.id %}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-light mb-4 shadow card-custom">
+        <div class="card-body">
+            <p><strong>Type:</strong> {{ item.get_media_type_display }}</p>
+            <p><strong>Status:</strong> {{ item.get_status_display }}</p>
+            <p><strong>Topic:</strong> {{ item.topic|default:"-" }}</p>
+            <p><strong>Tags:</strong> {{ item.tags.all|join:", "|default:"-" }}</p>
+            <p><strong>Date:</strong> {{ item.created_at|date:"M d, Y H:i" }}</p>
+            {% if item.file %}
+                <p><strong>File:</strong> <a class="link-info" href="{{ item.file.url }}" target="_blank">Download/View</a></p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if item.summary %}
+    <div class="card bg-dark text-light mb-4 shadow card-custom">
+        <div class="card-body">
+            <h3 class="mb-3">Summary</h3>
+            <div style="line-height: 1.6;">{{ item.summary|linebreaks }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if item.transcription %}
+    <div class="card bg-dark text-light mb-4 shadow card-custom">
+        <div class="card-body">
+            <h3 class="mb-3">Transcription / Content</h3>
+            <pre class="bg-secondary-subtle text-success-emphasis transcription-box">{{ item.transcription }}</pre>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if item.error_log %}
+    <div class="card mb-4 shadow error-log-card">
+        <div class="card-body">
+            <h3 class="mb-3 text-danger">Error Log</h3>
+            <pre class="text-danger" style="white-space: pre-wrap;">{{ item.error_log }}</pre>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card bg-dark text-light mx-auto my-5 shadow" style="max-width: 800px; border-radius: 8px;">
+<div class="card bg-dark text-light mx-auto my-5 shadow container-detail card-custom">
     <div class="card-body">
         <h1 class="mb-4">Project Settings</h1>
         <form method="post">
@@ -21,10 +21,6 @@
 
             <div class="mb-4">
                 <h3 class="mb-3">Prompts</h3>
-                <div class="mb-2">
-                    <label class="form-label fw-bold">Chat System Prompt:</label>
-                    {{ form.chat_prompt }}
-                </div>
                 <div class="mb-2">
                     <label class="form-label fw-bold">Summarization Prompt:</label>
                     {{ form.summarization_prompt }}

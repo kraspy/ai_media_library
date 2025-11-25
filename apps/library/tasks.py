@@ -110,13 +110,6 @@ def analyze_media(media_item_id):
         media_item.status = MediaItem.Status.COMPLETED
         media_item.save()
 
-        try:
-            from apps.library.services.rag_service import RAGService
-
-            RAGService().add_to_index(media_item)
-        except Exception as e:
-            logger.error(f'Failed to index {media_item.id}: {e}')
-
     except MediaItem.DoesNotExist:
         logger.error(f'MediaItem {media_item_id} not found')
     except Exception as e:
@@ -133,7 +126,7 @@ def analyze_media(media_item_id):
 def summarize_media(media_item_id):
     try:
         media_item = MediaItem.objects.get(id=media_item_id)
-        media_item.error_log = ''  # Clear error log
+        media_item.error_log = ''
         media_item.save()
 
         logger.info(f'Starting summarization for {media_item.id}')
