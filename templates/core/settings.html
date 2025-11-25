@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+    <h1>Project Settings</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 20px;">
+            <h3>AI Engines</h3>
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-weight: bold;">Transcription Engine:</label>
+                {{ form.transcription_engine }}
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-weight: bold;">LLM Provider:</label>
+                {{ form.llm_provider }}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h3>Prompts</h3>
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-weight: bold;">Chat System Prompt:</label>
+                {{ form.chat_prompt }}
+                <small style="color: #666;">Instructions for the RAG Chat Assistant.</small>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-weight: bold;">Summarization Prompt:</label>
+                {{ form.summarization_prompt }}
+                <small style="color: #666;">Instructions for generating media summaries.</small>
+            </div>
+        </div>
+
+        <button type="submit" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Save Settings</button>
+    </form>
+</div>
+{% endblock %}

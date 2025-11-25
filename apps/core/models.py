@@ -24,6 +24,14 @@ class ProjectSettings(models.Model):
         default=LLMProvider.OPENAI,
         help_text='Select LLM provider.',
     )
+    chat_prompt = models.TextField(
+        default='You are a helpful AI assistant for a personal media library. Use the provided context to answer questions.',
+        help_text='System prompt for the Chat Assistant.',
+    )
+    summarization_prompt = models.TextField(
+        default='Please provide a concise summary of the following text.',
+        help_text='System prompt for Summarization.',
+    )
 
     def save(self, *args, **kwargs):
         self.pk = 1
@@ -46,3 +54,4 @@ class ProjectSettings(models.Model):
 
     class Meta:
         verbose_name = 'Settings'
+        verbose_name_plural = 'Settings'

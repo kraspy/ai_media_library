@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Media Library</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-dark text-light font-sans min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+        <div class="container">
+            <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                <a class="nav-link fw-semibold text-light" href="{% url 'library:list' %}">Home</a>
+                <a class="nav-link fw-semibold text-light" href="{% url 'core:settings' %}">Settings</a>
+                <a class="nav-link fw-semibold text-light" href="/admin/">Admin</a>
+            </div>
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <span class="me-2 text-info fw-bold">Welcome, {{ user.username }}</span>
+                    <a class="btn btn-secondary me-2" href="{% url 'users:logout' %}">Logout</a>
+                {% else %}
+                    <a class="btn btn-info" href="{% url 'users:login' %}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <main class="container py-4 bg-dark text-light">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="mt-5 mb-3 text-center text-secondary small">
+        &copy; {{ now|date:"Y" }} AI Media Library. All rights reserved.
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
