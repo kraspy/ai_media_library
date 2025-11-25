@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
@@ -15,6 +16,16 @@ class ProjectSettingsView(LoginRequiredMixin, UpdateView):
     ]
     template_name = 'core/settings.html'
     success_url = reverse_lazy('core:settings')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        for field_name, field in form.fields.items():
+            if isinstance(
+                field.widget, (forms.TextInput, forms.Textarea, forms.Select)
+            ):
+                attrs = field.widget.attrs
+                attrs['class'] = attrs.get('class', '') + ' form-control'
+        return form
 
     def get_object(self):
         return ProjectSettings.load()

@@ -1,4 +1,7 @@
 import gc
+import logging
+import traceback
+from pathlib import Path
 
 import torch
 import whisperx
@@ -12,9 +15,11 @@ from apps.core.models import ProjectSettings
 
 from .models import MediaItem
 
+logger = logging.getLogger(__name__)
+
 
 @shared_task
-def transcribe_media(media_item_id):
+def analyze_media(media_item_id):
     try:
         media_item = MediaItem.objects.get(id=media_item_id)
         media_item.status = MediaItem.Status.PROCESSING
@@ -24,71 +29,102 @@ def transcribe_media(media_item_id):
         engine = project_settings.transcription_engine
         transcription_text = ''
 
-        if engine == ProjectSettings.TranscriptionEngine.WHISPERX:
-            device = settings.WHISPER_DEVICE
-            batch_size = 16
-            compute_type = settings.WHISPER_COMPUTE_TYPE
+        logger.info(
+            f'Starting processing for {media_item.id} ({media_item.media_type})'
+        )
 
-            model = whisperx.load_model(
-                settings.WHISPER_MODEL,
-                device,
-                compute_type=compute_type,
+        audio_path = media_item.file.path
+
+        if media_item.media_type == MediaItem.MediaType.VIDEO:
+            from apps.library.services.media_processing import (
+                cut_audio_from_video,
             )
 
-            audio = whisperx.load_audio(media_item.file.path)
-            result = model.transcribe(audio, batch_size=batch_size)
+            audio_path = cut_audio_from_video(Path(media_item.file.path))
+            logger.info(f'Extracted audio to {audio_path}')
 
-            del model
-            gc.collect()
-            if device == 'cuda':
-                torch.cuda.empty_cache()
+        if media_item.media_type == MediaItem.MediaType.IMAGE:
+            from apps.library.services.media_processing import perform_ocr
 
-            for segment in result['segments']:
-                transcription_text += segment['text'] + '\n'
+            transcription_text = perform_ocr(Path(media_item.file.path))
 
-        elif engine == ProjectSettings.TranscriptionEngine.T_ONE:
-            from tone import StreamingCTCPipeline, read_audio
+        elif media_item.media_type == MediaItem.MediaType.TEXT:
+            with open(
+                media_item.file.path, 'r', encoding='utf-8', errors='ignore'
+            ) as f:
+                transcription_text = f.read()
 
-            # T-One usage
-            audio = read_audio(media_item.file.path)
-            pipeline = StreamingCTCPipeline.from_hugging_face()
-            # forward_offline returns a list of phrases, we need to join them
-            phrases = pipeline.forward_offline(audio)
-            # Assuming phrases is a list of objects with 'text' attribute or dictionaries
-            # Based on README it prints phrases. Let's assume it returns a list of Phrase objects or dicts.
-            # If it returns a simple string, this might break.
-            # Let's inspect the output format in a separate check if possible, but for now assuming list of objects/dicts.
-            # Actually README says: "The resulting text along with phrase timings is returned to the client."
-            # And "print(pipeline.forward_offline(audio))"
-            # Let's assume it returns a list of Phrase objects which have a text attribute or __str__.
-            # For safety, let's convert to string.
+        elif media_item.media_type in [
+            MediaItem.MediaType.AUDIO,
+            MediaItem.MediaType.VIDEO,
+        ]:
+            logger.info(f'Transcribing audio from {audio_path} using {engine}')
 
-            # Correction: Looking at T-One code would be better, but based on common ASR pipelines:
-            transcription_text = (
-                ' '.join([p.text for p in phrases])
-                if phrases and hasattr(phrases[0], 'text')
-                else str(phrases)
-            )
+            if engine == ProjectSettings.TranscriptionEngine.WHISPERX:
+                device = settings.WHISPER_DEVICE
+                batch_size = 16
+                compute_type = settings.WHISPER_COMPUTE_TYPE
 
-        elif engine == ProjectSettings.TranscriptionEngine.OPENAI:
-            client = OpenAI(api_key=settings.OPENAI_API_KEY)
-            with open(media_item.file.path, 'rb') as audio_file:
-                transcript = client.audio.transcriptions.create(
-                    model='whisper-1', file=audio_file
+                model = whisperx.load_model(
+                    settings.WHISPER_MODEL,
+                    device,
+                    compute_type=compute_type,
                 )
-            transcription_text = transcript.text
+
+                audio = whisperx.load_audio(str(audio_path))
+                result = model.transcribe(audio, batch_size=batch_size)
+
+                del model
+                gc.collect()
+                if device == 'cuda':
+                    torch.cuda.empty_cache()
+
+                for segment in result['segments']:
+                    transcription_text += segment['text'] + '\n'
+
+            elif engine == ProjectSettings.TranscriptionEngine.T_ONE:
+                from tone import StreamingCTCPipeline, read_audio
+
+                audio = read_audio(str(audio_path))
+                pipeline = StreamingCTCPipeline.from_hugging_face()
+                phrases = pipeline.forward_offline(audio)
+                transcription_text = (
+                    ' '.join([p.text for p in phrases])
+                    if phrases and hasattr(phrases[0], 'text')
+                    else str(phrases)
+                )
+
+            elif engine == ProjectSettings.TranscriptionEngine.OPENAI:
+                client = OpenAI(api_key=settings.OPENAI_API_KEY)
+                with open(audio_path, 'rb') as audio_file:
+                    transcript = client.audio.transcriptions.create(
+                        model='whisper-1', file=audio_file
+                    )
+                transcription_text = transcript.text
 
         media_item.transcription = transcription_text.strip()
         media_item.save()
 
-        # SUMMARIZATION
-        summarize_media.delay(media_item.id)
+        logger.info(f'Analysis completed for {media_item.id}')
+
+        media_item.status = MediaItem.Status.COMPLETED
+        media_item.save()
+
+        try:
+            from apps.library.services.rag_service import RAGService
+
+            RAGService().add_to_index(media_item)
+        except Exception as e:
+            logger.error(f'Failed to index {media_item.id}: {e}')
 
     except MediaItem.DoesNotExist:
-        pass
+        logger.error(f'MediaItem {media_item_id} not found')
     except Exception as e:
+        logger.error(f'Error analyzing {media_item_id}: {e}')
+        traceback.print_exc()
         if 'media_item' in locals():
             media_item.status = MediaItem.Status.FAILED
+            media_item.error_log = traceback.format_exc()
             media_item.save()
         raise e
 
@@ -97,11 +133,18 @@ def transcribe_media(media_item_id):
 def summarize_media(media_item_id):
     try:
         media_item = MediaItem.objects.get(id=media_item_id)
+        media_item.error_log = ''  # Clear error log
+        media_item.save()
 
-        if not media_item.transcription:
-            return
+        logger.info(f'Starting summarization for {media_item.id}')
 
         project_settings = ProjectSettings.load()
+        system_prompt = project_settings.summarization_prompt
+
+        if not media_item.transcription:
+            logger.warning(f'No transcription found for {media_item.id}')
+            return
+
         provider = project_settings.llm_provider
 
         api_key = settings.OPENAI_API_KEY
@@ -135,10 +178,15 @@ def summarize_media(media_item_id):
         media_item.status = MediaItem.Status.COMPLETED
         media_item.save()
 
+        logger.info(f'Summarization completed for {media_item.id}')
+
     except MediaItem.DoesNotExist:
         pass
     except Exception as e:
+        logger.error(f'Error summarizing {media_item_id}: {e}')
+        traceback.print_exc()
         if 'media_item' in locals():
             media_item.status = MediaItem.Status.FAILED
+            media_item.error_log = traceback.format_exc()
             media_item.save()
         raise e
