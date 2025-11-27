@@ -107,4 +107,94 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
+        migrations.CreateModel(
+            name='StudyPlan',
+            fields=[
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'status',
+                    models.CharField(
+                        choices=[
+                            ('active', 'Active'),
+                            ('completed', 'Completed'),
+                            ('archived', 'Archived'),
+                        ],
+                        default='active',
+                        max_length=20,
+                    ),
+                ),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    'media_item',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name='study_plans',
+                        to='library.mediaitem',
+                    ),
+                ),
+                (
+                    'topic',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name='study_plans',
+                        to='library.topic',
+                    ),
+                ),
+                (
+                    'user',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='study_plans',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name='StudyUnit',
+            fields=[
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                ('order', models.PositiveIntegerField(default=0)),
+                ('is_completed', models.BooleanField(default=False)),
+                (
+                    'concept',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='study_units',
+                        to='learning.concept',
+                    ),
+                ),
+                (
+                    'plan',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='units',
+                        to='learning.studyplan',
+                    ),
+                ),
+            ],
+            options={
+                'ordering': ['order'],
+            },
+        ),
     ]

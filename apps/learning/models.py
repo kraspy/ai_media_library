@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-from apps.library.models import MediaItem
+from apps.library.models import MediaItem, Topic
 
 
 class Concept(models.Model):
@@ -59,3 +59,62 @@ class Flashcard(models.Model):
 
     def __str__(self):
         return f'Flashcard: {self.front[:50]}...'
+
+
+class StudyPlan(models.Model):
+    """
+    A container for a user's learning journey.
+    """
+
+    class Status(models.TextChoices):
+        ACTIVE = 'active', 'Active'
+        COMPLETED = 'completed', 'Completed'
+        ARCHIVED = 'archived', 'Archived'
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='study_plans',
+    )
+    topic = models.ForeignKey(
+        Topic,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='study_plans',
+    )
+    media_item = models.ForeignKey(
+        MediaItem,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='study_plans',
+    )
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.ACTIVE
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Plan for {self.user.username} ({self.created_at.date()})'
+
+
+class StudyUnit(models.Model):
+    """
+    A specific lesson/module within a plan.
+    """
+
+    plan = models.ForeignKey(
+        StudyPlan, on_delete=models.CASCADE, related_name='units'
+    )
+    concept = models.ForeignKey(
+        Concept, on_delete=models.CASCADE, related_name='study_units'
+    )
+    order = models.PositiveIntegerField(default=0)
+    is_completed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f'{self.order}. {self.concept.title}'
