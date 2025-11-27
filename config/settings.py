@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.library.apps.LibraryConfig',
     'apps.core.apps.CoreConfig',
+    'apps.learning.apps.LearningConfig',
     'taggit',
     'django.contrib.admin',
     'django.contrib.auth',
