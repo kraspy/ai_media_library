@@ -118,3 +118,29 @@ class StudyUnit(models.Model):
 
     def __str__(self):
         return f'{self.order}. {self.concept.title}'
+
+
+class QuizQuestion(models.Model):
+    """
+    A generated quiz question.
+    """
+
+    class QuestionType(models.TextChoices):
+        MULTIPLE_CHOICE = 'multiple_choice', 'Multiple Choice'
+        OPEN = 'open', 'Open Answer'
+
+    concept = models.ForeignKey(
+        Concept, on_delete=models.CASCADE, related_name='quiz_questions'
+    )
+    question_data = models.JSONField(
+        help_text='JSON structure with question, options, correct_answer, explanation'
+    )
+    question_type = models.CharField(
+        max_length=20,
+        choices=QuestionType.choices,
+        default=QuestionType.MULTIPLE_CHOICE,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Quiz for {self.concept.title}'

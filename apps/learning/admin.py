@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Concept, Flashcard, StudyPlan, StudyUnit
+from .models import Concept, Flashcard, QuizQuestion, StudyPlan, StudyUnit
 
 
 @admin.register(Concept)
@@ -34,3 +34,9 @@ class StudyPlanAdmin(admin.ModelAdmin):
     list_display = ('user', 'topic', 'media_item', 'status', 'created_at')
     list_filter = ('status', 'created_at')
     inlines = [StudyUnitInline]
+
+
+@admin.register(QuizQuestion)
+class QuizQuestionAdmin(admin.ModelAdmin):
+    list_display = ('concept', 'question_type', 'created_at')
+    list_filter = ('question_type',)
