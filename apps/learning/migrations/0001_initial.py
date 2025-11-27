@@ -46,4 +46,65 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
+        migrations.CreateModel(
+            name='Flashcard',
+            fields=[
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'front',
+                    models.TextField(help_text='Question or front side'),
+                ),
+                ('back', models.TextField(help_text='Answer or back side')),
+                (
+                    'reps',
+                    models.PositiveIntegerField(
+                        default=0, help_text='Number of repetitions'
+                    ),
+                ),
+                (
+                    'interval',
+                    models.PositiveIntegerField(
+                        default=0, help_text='Days until next review'
+                    ),
+                ),
+                (
+                    'ease_factor',
+                    models.FloatField(
+                        default=2.5, help_text='Easiness factor'
+                    ),
+                ),
+                ('last_review', models.DateField(blank=True, null=True)),
+                (
+                    'next_review',
+                    models.DateField(default=django.utils.timezone.now),
+                ),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    'concept',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name='flashcards',
+                        to='learning.concept',
+                    ),
+                ),
+                (
+                    'user',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='flashcards',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+            ],
+        ),
     ]
