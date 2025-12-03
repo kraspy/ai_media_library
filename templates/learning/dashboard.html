@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Learning Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="display-5 fw-bold text-light">Learning Dashboard</h1>
+            <p class="lead text-secondary">Track your progress and review materials.</p>
+        </div>
+    </div>
+
+    <!-- SRS Review Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card card-custom bg-dark text-light border-0 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="card-title text-primary mb-0">Spaced Repetition</h3>
+                        <p class="card-text text-secondary mt-1">
+                            You have <strong class="text-warning">{{ cards_due_count }}</strong> cards due for review today.
+                        </p>
+                    </div>
+                    {% if cards_due_count > 0 %}
+                    <a href="{% url 'learning:study_session' %}" class="btn btn-primary btn-lg px-4">
+                        <i class="bi bi-play-circle me-2"></i>Start Review
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-lg px-4" disabled>
+                        <i class="bi bi-check-circle me-2"></i>All Caught Up
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Plans -->
+    <div class="row">
+        <div class="col-md-8">
+            <h3 class="mb-3 text-light">Active Study Plans</h3>
+            {% if active_plans %}
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    {% for plan in active_plans %}
+                    <div class="col">
+                        <div class="card h-100 bg-dark text-light border-secondary">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {% if plan.topic %}
+                                        {{ plan.topic.title }}
+                                    {% elif plan.media_item %}
+                                        {{ plan.media_item.title }}
+                                    {% else %}
+                                        Custom Plan
+                                    {% endif %}
+                                </h5>
+                                <p class="card-text text-secondary small">
+                                    Created: {{ plan.created_at|date:"M d, Y" }}
+                                </p>
+                                <div class="progress mb-3" style="height: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {% widthratio plan.completed_units plan.total_units 100 %}%;" 
+                                         aria-valuenow="{{ plan.completed_units }}" aria-valuemin="0" aria-valuemax="{{ plan.total_units }}">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-secondary">{{ plan.completed_units }} / {{ plan.total_units }} units</small>
+                                    <a href="{% url 'learning:plan_detail' plan.id %}" class="btn btn-sm btn-outline-light">View Plan</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-secondary" role="alert">
+                    No active study plans. Go to the Library to create one!
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-md-4">
+            <h3 class="mb-3 text-light">Recent Activity</h3>
+            <ul class="list-group list-group-flush bg-transparent">
+                {% for unit in recent_activity %}
+                <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center px-0">
+                    <div>
+                        <span class="d-block">{{ unit.concept.title }}</span>
+                        <small class="text-secondary">{{ unit.plan.created_at|date:"M d" }}</small>
+                    </div>
+                    <span class="badge bg-success rounded-pill"><i class="bi bi-check"></i></span>
+                </li>
+                {% empty %}
+                <li class="list-group-item bg-transparent text-secondary border-secondary px-0">
+                    No recent activity.
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

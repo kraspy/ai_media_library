@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Study Plan: {{ plan.topic.title|default:plan.media_item.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="text-light mb-1">
+                {% if plan.topic %}
+                    {{ plan.topic.title }}
+                {% elif plan.media_item %}
+                    {{ plan.media_item.title }}
+                {% else %}
+                    Custom Plan
+                {% endif %}
+            </h1>
+            <span class="badge {% if plan.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ plan.get_status_display }}
+            </span>
+        </div>
+        <a href="{% url 'learning:dashboard' %}" class="btn btn-outline-secondary">Back</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card bg-dark text-light border-secondary">
+                <div class="card-header border-secondary">
+                    <h5 class="mb-0">Curriculum</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for unit in plan.units.all %}
+                    <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-secondary rounded-circle me-3" style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                                {{ unit.order }}
+                            </span>
+                            <div>
+                                <h6 class="mb-0">{{ unit.concept.title }}</h6>
+                                <small class="text-secondary">{{ unit.concept.description|truncatechars:100 }}</small>
+                            </div>
+                        </div>
+                        <div>
+                            {% if unit.is_completed %}
+                                <span class="badge bg-success"><i class="bi bi-check-lg"></i> Done</span>
+                            {% else %}
+                                <a href="{% url 'learning:quiz' unit.id %}" class="btn btn-sm btn-outline-primary">Start</a>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item bg-transparent text-secondary">
+                        No units in this plan yet.
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-dark text-light border-secondary mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Progress</h5>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: 0%;" 
+                             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                             0%
+                        </div>
+                    </div>
+                    <p class="text-secondary small">0 of {{ plan.units.count }} units completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

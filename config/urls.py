@@ -23,8 +23,11 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('apps.users.urls')),
-    path('core/', include('apps.core.urls')),
-    path('', include('apps.library.urls')),
+    path('users/', include('apps.users.urls', namespace='users')),
+    path('core/', include('apps.core.urls', namespace='core')),
+    path('library/', include('apps.library.urls', namespace='library')),
+    path('learning/', include('apps.learning.urls', namespace='learning')),
+    path('', include('apps.library.urls', namespace='library_root')),
 ]
 
 if settings.DEBUG:

@@ -15,6 +15,7 @@
                 <a class="nav-link fw-semibold text-light" href="{% url 'library:list' %}">Home</a>
                 <a class="nav-link fw-semibold text-light" href="{% url 'core:settings' %}">Settings</a>
                 <a class="nav-link fw-semibold text-light" href="/admin/">Admin</a>
+                <a class="nav-link fw-semibold text-light" href="{% url 'learning:dashboard' %}">Learning</a>
             </div>
             <div class="d-flex align-items-center">
                 {% if user.is_authenticated %}
