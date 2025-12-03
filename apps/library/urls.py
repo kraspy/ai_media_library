@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    MediaBulkActionView,
     MediaDeleteView,
     MediaDetailView,
     MediaListView,
@@ -16,4 +17,5 @@ urlpatterns = [
     path('detail/<int:pk>/', MediaDetailView.as_view(), name='detail'),
     path('update/<int:pk>/', MediaUpdateView.as_view(), name='update'),
     path('delete/<int:pk>/', MediaDeleteView.as_view(), name='delete'),
+    path('bulk-action/', MediaBulkActionView.as_view(), name='bulk_action'),
 ]

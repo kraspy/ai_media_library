@@ -1,4 +1,6 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -6,9 +8,11 @@ from django.views.generic import (
     DetailView,
     ListView,
     UpdateView,
+    View,
 )
 
 from .models import MediaItem
+from .tasks import analyze_media
 
 
 class MediaListView(ListView):
@@ -78,6 +82,32 @@ class MediaUpdateView(UpdateView):
     fields = ['title', 'topic', 'tags']
     template_name = 'library/update.html'
     success_url = reverse_lazy('library:list')
+
+
+class MediaBulkActionView(LoginRequiredMixin, View):
+    def post(self, request):
+        action = request.POST.get('action')
+        media_ids = request.POST.getlist('media_ids')
+
+        if not media_ids:
+            return redirect('library:list')
+
+        queryset = MediaItem.objects.filter(id__in=media_ids)
+
+        if action == 'delete':
+            count = queryset.count()
+            queryset.delete()
+
+        elif action == 'reanalyze':
+            for item in queryset:
+                item.status = MediaItem.Status.PENDING
+                item.transcription = ''
+                item.summary = ''
+                item.error_log = ''
+                item.save()
+                analyze_media.delay(item.id)
+
+        return redirect('library:list')
 
 
 class MediaDeleteView(DeleteView):
