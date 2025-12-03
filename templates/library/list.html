@@ -8,56 +8,127 @@
     </div>
 
     <div class="card bg-dark text-light shadow card-custom" style="overflow: hidden;">
+    <form method="post" action="{% url 'library:bulk_action' %}" id="bulkForm">
+        {% csrf_token %}
+        <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center bg-dark-subtle">
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-secondary" id="selectionCount">Selected: 0</span>
+                <div class="vr text-secondary"></div>
+                <button type="submit" name="action" value="reanalyze" class="btn btn-sm btn-outline-primary" id="btnReanalyze" disabled title="Restart AI analysis for selected items">
+                    <i class="bi bi-arrow-repeat me-2"></i>Re-analyze
+                </button>
+                <button type="submit" name="action" value="delete" class="btn btn-sm btn-outline-danger" id="btnDelete" disabled onclick="return confirm('Are you sure you want to delete selected items?')" title="Permanently delete selected items">
+                    <i class="bi bi-trash me-2"></i>Delete
+                </button>
+            </div>
+            <small class="text-secondary"><i class="bi bi-info-circle me-1"></i>Select items to perform actions</small>
+        </div>
+
         <div class="table-responsive">
-            <table class="table table-dark table-hover align-middle mb-0">
-                <thead class="table-secondary text-dark">
+            <table class="table table-dark table-hover align-middle">
+                <thead>
                     <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Topic</th>
-                        <th scope="col">Date</th>
+                        <th style="width: 40px;">
+                            <input type="checkbox" class="form-check-input" id="selectAll">
+                        </th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% for item in media_items %}
+                    {% for item in media_items %}
                     <tr>
                         <td>
-                            <a href="{% url 'library:detail' item.id %}" class="link-info fw-bold text-decoration-none">{{ item.title }}</a>
+                            <input type="checkbox" class="form-check-input media-checkbox" name="media_ids" value="{{ item.id }}">
                         </td>
                         <td>
-                            <span class="bg-secondary text-dark px-2 py-1 rounded text-small">{{ item.get_media_type_display }}</span>
+                            <a href="{% url 'library:detail' item.pk %}" class="text-decoration-none text-light fw-bold">
+                                {{ item.title }}
+                            </a>
+                            {% if item.summary %}
+                                <br>
+                                <small class="text-secondary">{{ item.summary|truncatechars:100 }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ item.get_media_type_display }}</span>
                         </td>
                         <td>
                             {% if item.status == 'completed' %}
-                                <span class="text-success">&#10004; Completed</span>
-                            {% elif item.status == 'failed' %}
-                                <span class="text-danger">&#10008; Failed</span>
+                                <span class="badge bg-success">Completed</span>
                             {% elif item.status == 'processing' %}
-                                <span class="text-warning">&#8987; Processing</span>
+                                <span class="badge bg-warning text-dark">Processing</span>
+                            {% elif item.status == 'failed' %}
+                                <span class="badge bg-danger">Failed</span>
                             {% else %}
-                                {{ item.get_status_display }}
+                                <span class="badge bg-secondary">Pending</span>
                             {% endif %}
                         </td>
+                        <td>{{ item.created_at|date:"M d, Y" }}</td>
                         <td>
-                            {% if item.topic %}
-                                {{ item.topic }}
-                            {% else %}
-                                <span class="text-secondary">-</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-secondary">
-                            {{ item.created_at|date:"d.m.Y H:i" }}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'library:update' item.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'library:delete' item.pk %}" class="btn btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
-                {% empty %}
+                    {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center py-4 text-secondary">No media items found.</td>
+                        <td colspan="6" class="text-center py-5 text-secondary">
+                            <i class="bi bi-folder2-open display-4 d-block mb-3"></i>
+                            No media items found. <a href="{% url 'library:upload' %}" class="text-primary">Upload one</a> to get started.
+                        </td>
                     </tr>
-                {% endfor %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.media-checkbox');
+            const selectionCount = document.getElementById('selectionCount');
+            const btnReanalyze = document.getElementById('btnReanalyze');
+            const btnDelete = document.getElementById('btnDelete');
+
+            function updateToolbar() {
+                const checkedCount = document.querySelectorAll('.media-checkbox:checked').length;
+                selectionCount.textContent = `Selected: ${checkedCount}`;
+                
+                const hasSelection = checkedCount > 0;
+                btnReanalyze.disabled = !hasSelection;
+                btnDelete.disabled = !hasSelection;
+                
+                if (checkedCount === 0) {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                } else if (checkedCount === checkboxes.length) {
+                    selectAll.checked = true;
+                    selectAll.indeterminate = false;
+                } else {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = true;
+                }
+            }
+
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(cb => cb.checked = this.checked);
+                updateToolbar();
+            });
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateToolbar);
+            });
+        });
+    </script>
 </div>
 {% endblock %}
