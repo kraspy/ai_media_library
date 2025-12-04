@@ -6,7 +6,6 @@ class ProjectSettings(models.Model):
     class TranscriptionEngine(models.TextChoices):
         OPENAI = 'openai', 'OpenAI Whisper'
         WHISPERX = 'whisperx', 'WhisperX (Local)'
-        T_ONE = 't_one', 'T-One (Local)'
 
     class LLMProvider(models.TextChoices):
         OPENAI = 'openai', 'OpenAI'

@@ -4,21 +4,61 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='ProjectSettings',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('transcription_engine', models.CharField(choices=[('openai', 'OpenAI Whisper'), ('whisperx', 'WhisperX (Local)'), ('t_one', 'T-One (Local)')], default='whisperx', help_text='Select transcription engine.', max_length=20)),
-                ('llm_provider', models.CharField(choices=[('openai', 'OpenAI'), ('deepseek', 'DeepSeek')], default='openai', help_text='Select LLM provider.', max_length=20)),
-                ('chat_prompt', models.TextField(default='You are a helpful AI assistant for a personal media library. Use the provided context to answer questions.', help_text='System prompt for the Chat Assistant.')),
-                ('summarization_prompt', models.TextField(default='Please provide a concise summary of the following text.', help_text='System prompt for Summarization.')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'transcription_engine',
+                    models.CharField(
+                        choices=[
+                            ('openai', 'OpenAI Whisper'),
+                            ('whisperx', 'WhisperX (Local)'),
+                        ],
+                        default='whisperx',
+                        help_text='Select transcription engine.',
+                        max_length=20,
+                    ),
+                ),
+                (
+                    'llm_provider',
+                    models.CharField(
+                        choices=[
+                            ('openai', 'OpenAI'),
+                            ('deepseek', 'DeepSeek'),
+                        ],
+                        default='openai',
+                        help_text='Select LLM provider.',
+                        max_length=20,
+                    ),
+                ),
+                (
+                    'chat_prompt',
+                    models.TextField(
+                        default='You are a helpful AI assistant for a personal media library. Use the provided context to answer questions.',
+                        help_text='System prompt for the Chat Assistant.',
+                    ),
+                ),
+                (
+                    'summarization_prompt',
+                    models.TextField(
+                        default='Please provide a concise summary of the following text.',
+                        help_text='System prompt for Summarization.',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Settings',
