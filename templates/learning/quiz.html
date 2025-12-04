@@ -3,37 +3,84 @@
 {% block title %}Quiz: {{ unit.concept.title }}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card bg-dark text-light border-secondary">
+            <div class="card bg-dark text-light shadow card-custom">
                 <div class="card-header border-secondary">
-                    <h3 class="mb-0">Quiz: {{ unit.concept.title }}</h3>
+                    <h3 class="card-title mb-0">Quiz: {{ unit.concept.title }}</h3>
                 </div>
                 <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {% for question in questions %}
-                        <div class="mb-4">
-                            <h5 class="mb-3">{{ forloop.counter }}. {{ question.question_data.question }}</h5>
-                            <div class="list-group">
-                                {% for option in question.question_data.options %}
-                                <label class="list-group-item bg-transparent text-light border-secondary">
-                                    <input class="form-check-input me-1" type="radio" name="question_{{ question.id }}" value="{{ forloop.counter0 }}">
-                                    {{ option }}
-                                </label>
-                                {% endfor %}
-                            </div>
+                    {% if is_submitted %}
+                        <div class="alert {% if passed %}alert-success{% else %}alert-danger{% endif %} mb-4">
+                            <h4 class="alert-heading">
+                                {% if passed %}
+                                    <i class="bi bi-check-circle-fill me-2"></i>Passed!
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill me-2"></i>Failed
+                                {% endif %}
+                            </h4>
+                            <p class="mb-0">You scored {{ score }} out of {{ total }} ({{ percentage|floatformat:0 }}%)</p>
                         </div>
-                        {% empty %}
-                        <p class="text-secondary">No questions generated for this concept yet.</p>
+
+                        {% for result in results %}
+                            <div class="mb-4 p-3 rounded border {% if result.is_correct %}border-success bg-success-subtle text-success-emphasis{% else %}border-danger bg-danger-subtle text-danger-emphasis{% endif %}">
+                                <p class="fw-bold mb-2">{{ result.question.question_data.question }}</p>
+                                
+                                <div class="mb-2">
+                                    <strong>Your Answer:</strong> {{ result.user_answer }}
+                                    {% if result.is_correct %}
+                                        <i class="bi bi-check-lg"></i>
+                                    {% else %}
+                                        <i class="bi bi-x-lg"></i>
+                                    {% endif %}
+                                </div>
+
+                                {% if not result.is_correct %}
+                                    <div class="mb-2 text-success">
+                                        <strong>Correct Answer:</strong> {{ result.correct_answer }}
+                                    </div>
+                                {% endif %}
+
+                                {% if result.explanation %}
+                                    <div class="mt-2 small border-top border-secondary pt-2">
+                                        <strong>Explanation:</strong> {{ result.explanation }}
+                                    </div>
+                                {% endif %}
+                            </div>
                         {% endfor %}
 
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
-                            <a href="{% url 'learning:plan_detail' unit.plan.id %}" class="btn btn-outline-secondary">Cancel</a>
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'learning:quiz' unit.pk %}" class="btn btn-outline-light">Retry Quiz</a>
+                            {% if passed %}
+                                <a href="{% url 'learning:plan_detail' unit.plan.pk %}" class="btn btn-success">Continue Learning</a>
+                            {% else %}
+                                <a href="{% url 'learning:plan_detail' unit.plan.pk %}" class="btn btn-secondary">Back to Plan</a>
+                            {% endif %}
                         </div>
-                    </form>
+
+                    {% else %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for question in questions %}
+                                <div class="mb-4">
+                                    <p class="fw-bold">{{ forloop.counter }}. {{ question.question_data.question }}</p>
+                                    {% for option in question.question_data.options %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="q{{ question.id }}_opt{{ forloop.counter }}" value="{{ option }}" required>
+                                            <label class="form-check-label" for="q{{ question.id }}_opt{{ forloop.counter }}">
+                                                {{ option }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Submit Answers</button>
+                            </div>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -96,6 +96,67 @@ class QuizView(LoginRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.object.is_completed = True
-        self.object.save()
-        return redirect('learning:plan_detail', pk=self.object.plan.id)
+        questions = self.object.concept.quiz_questions.all()
+
+        score = 0
+        total = questions.count()
+        results = []
+
+        for question in questions:
+            user_answer = request.POST.get(f'question_{question.id}')
+
+            options = question.question_data.get('options', [])
+            correct_index = question.question_data.get('correct_index')
+            correct_answer = (
+                options[correct_index]
+                if options and correct_index is not None
+                else None
+            )
+            is_correct = user_answer == correct_answer
+
+            if is_correct:
+                score += 1
+            else:
+                flashcard = Flashcard.objects.filter(
+                    user=request.user, concept=question.concept
+                ).first()
+
+                if flashcard:
+                    flashcard.interval = 1
+                    flashcard.ease_factor = max(
+                        1.3, flashcard.ease_factor - 0.2
+                    )
+                    flashcard.next_review = timezone.now().date()
+                    flashcard.save()
+
+            results.append(
+                {
+                    'question': question,
+                    'user_answer': user_answer,
+                    'correct_answer': correct_answer,
+                    'is_correct': is_correct,
+                    'explanation': question.question_data.get('explanation'),
+                }
+            )
+
+        percentage = (score / total * 100) if total > 0 else 0
+        passed = percentage >= 70
+
+        if passed:
+            self.object.is_completed = True
+            self.object.save()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                'unit': self.object,
+                'questions': questions,
+                'results': results,
+                'score': score,
+                'total': total,
+                'percentage': percentage,
+                'passed': passed,
+                'is_submitted': True,
+            },
+        )

@@ -110,6 +110,10 @@ def analyze_media(media_item_id):
         media_item.status = MediaItem.Status.COMPLETED
         media_item.save()
 
+        from apps.learning.tasks import generate_content_from_media
+
+        generate_content_from_media.delay(media_item.id)
+
     except MediaItem.DoesNotExist:
         logger.error(f'MediaItem {media_item_id} not found')
     except Exception as e:
@@ -172,6 +176,10 @@ def summarize_media(media_item_id):
         media_item.save()
 
         logger.info(f'Summarization completed for {media_item.id}')
+
+        from apps.learning.tasks import generate_content_from_media
+
+        generate_content_from_media.delay(media_item.id)
 
     except MediaItem.DoesNotExist:
         pass
