@@ -1,6 +1,7 @@
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
+from apps.core.models import ProjectSettings
 from apps.learning.schemas import QuizSchema
 
 from .base import get_llm
@@ -21,17 +22,12 @@ class QuizGenerationAgent:
         concept_description: str,
         context_text: str = '',
     ) -> QuizSchema:
+        settings = ProjectSettings.load()
+        system_prompt = settings.quiz_generation_prompt
+
         prompt = ChatPromptTemplate.from_messages(
             [
-                ('system', 'You are an expert exam creator.'),
-                (
-                    'system',
-                    "Generate multiple-choice questions to test the user's understanding of the concept.",
-                ),
-                (
-                    'system',
-                    'Ensure distractors (wrong answers) are plausible but incorrect.',
-                ),
+                ('system', system_prompt),
                 ('system', '{format_instructions}'),
                 (
                     'user',

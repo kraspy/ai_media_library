@@ -12,6 +12,10 @@ class ProjectSettingsView(LoginRequiredMixin, UpdateView):
         'transcription_engine',
         'llm_provider',
         'summarization_prompt',
+        'concept_extraction_prompt',
+        'plan_generation_prompt',
+        'quiz_generation_prompt',
+        'tutor_prompt',
     ]
     template_name = 'core/settings.html'
     success_url = reverse_lazy('core:settings')

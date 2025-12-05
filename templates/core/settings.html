@@ -26,6 +26,22 @@
                     <label class="form-label fw-bold">{% trans "Summarization Prompt" %}:</label>
                     {{ form.summarization_prompt }}
                 </div>
+                <div class="mb-2">
+                    <label class="form-label fw-bold">{% trans "Concept Extraction Prompt" %}:</label>
+                    {{ form.concept_extraction_prompt }}
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-bold">{% trans "Plan Generation Prompt" %}:</label>
+                    {{ form.plan_generation_prompt }}
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-bold">{% trans "Quiz Generation Prompt" %}:</label>
+                    {{ form.quiz_generation_prompt }}
+                </div>
+                <div class="mb-2">
+                    <label class="form-label fw-bold">{% trans "Tutor Prompt" %}:</label>
+                    {{ form.tutor_prompt }}
+                </div>
             </div>
 
             <button type="submit" class="btn btn-info px-4">{% trans "Save Settings" %}</button>

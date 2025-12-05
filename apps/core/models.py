@@ -31,6 +31,26 @@ class ProjectSettings(models.Model):
         help_text=_('System prompt for Summarization.'),
         verbose_name=_('Summarization Prompt'),
     )
+    concept_extraction_prompt = models.TextField(
+        default='You are an expert educational analyst. Your goal is to extract key concepts from the provided text.\nExtract atomic concepts that are suitable for creating flashcards and study units.',
+        help_text=_('System prompt for Concept Extraction Agent.'),
+        verbose_name=_('Concept Extraction Prompt'),
+    )
+    plan_generation_prompt = models.TextField(
+        default='You are an expert curriculum designer.\nCreate a logical, step-by-step study plan based on the provided concepts.\nOrder the units from simplest to most complex. Ensure dependencies are respected.',
+        help_text=_('System prompt for Study Plan Generation Agent.'),
+        verbose_name=_('Plan Generation Prompt'),
+    )
+    quiz_generation_prompt = models.TextField(
+        default="You are an expert exam creator.\nGenerate multiple-choice questions to test the user's understanding of the concept.\nEnsure distractors (wrong answers) are plausible but incorrect.",
+        help_text=_('System prompt for Quiz Generation Agent.'),
+        verbose_name=_('Quiz Generation Prompt'),
+    )
+    tutor_prompt = models.TextField(
+        default="You are a helpful AI Tutor. Use the available tools to answer the user's questions.",
+        help_text=_('System prompt for Tutor Agent.'),
+        verbose_name=_('Tutor Prompt'),
+    )
 
     def save(self, *args, **kwargs):
         self.pk = 1

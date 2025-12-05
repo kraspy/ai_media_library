@@ -1,6 +1,7 @@
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
+from apps.core.models import ProjectSettings
 from apps.learning.schemas import ConceptSchema, StudyPlanSchema
 
 from .base import get_llm
@@ -25,17 +26,12 @@ class PlanGenerationAgent:
             ]
         )
 
+        settings = ProjectSettings.load()
+        system_prompt = settings.plan_generation_prompt
+
         prompt = ChatPromptTemplate.from_messages(
             [
-                ('system', 'You are an expert curriculum designer.'),
-                (
-                    'system',
-                    'Create a logical, step-by-step study plan based on the provided concepts.',
-                ),
-                (
-                    'system',
-                    'Order the units from simplest to most complex. Ensure dependencies are respected.',
-                ),
+                ('system', system_prompt),
                 ('system', '{format_instructions}'),
                 (
                     'user',

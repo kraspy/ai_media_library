@@ -1,6 +1,7 @@
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
+from apps.core.models import ProjectSettings
 from apps.learning.schemas import ConceptListSchema
 
 from .base import get_llm
@@ -16,15 +17,14 @@ class ConceptExtractionAgent:
         self.parser = PydanticOutputParser(pydantic_object=ConceptListSchema)
 
     def run(self, text: str) -> ConceptListSchema:
+        settings = ProjectSettings.load()
+        system_prompt = settings.concept_extraction_prompt
+
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     'system',
-                    'You are an expert educational analyst. Your goal is to extract key concepts from the provided text.',
-                ),
-                (
-                    'system',
-                    'Extract atomic concepts that are suitable for creating flashcards and study units.',
+                    system_prompt,
                 ),
                 ('system', '{format_instructions}'),
                 (

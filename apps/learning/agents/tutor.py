@@ -47,11 +47,17 @@ class TutorAgent:
         self.llm = get_llm(temperature=0.7)
         self.tools = [search_knowledge_base, get_study_plan]
 
+        # Use local import to avoid circular dependency if possible, or just standard import
+        from apps.core.models import ProjectSettings
+
+        settings = ProjectSettings.load()
+        system_prompt = settings.tutor_prompt
+
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     'system',
-                    "You are a helpful AI Tutor. Use the available tools to answer the user's questions.",
+                    system_prompt,
                 ),
                 ('placeholder', '{chat_history}'),
                 ('user', '{input}'),
