@@ -36,9 +36,7 @@ class Flashcard(models.Model):
     )
     concept = models.ForeignKey(
         Concept,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
         related_name='flashcards',
     )
     front = models.TextField(help_text='Question or front side')
@@ -85,9 +83,7 @@ class StudyPlan(models.Model):
     )
     media_item = models.ForeignKey(
         MediaItem,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
         related_name='study_plans',
     )
     status = models.CharField(
