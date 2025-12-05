@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="mx-auto my-4 container-list">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Media Library</h1>
-        <a href="{% url 'library:upload' %}" class="btn btn-success px-4 py-2">Upload New Media</a>
+        <h1 class="mb-0">{% trans "Media Library" %}</h1>
+        <a href="{% url 'library:upload' %}" class="btn btn-success px-4 py-2">{% trans "Upload New Media" %}</a>
     </div>
 
     <div class="card bg-dark text-light shadow card-custom" style="overflow: hidden;">
@@ -12,16 +13,16 @@
         {% csrf_token %}
         <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center bg-dark-subtle">
             <div class="d-flex align-items-center gap-3">
-                <span class="text-secondary" id="selectionCount">Selected: 0</span>
+                <span class="text-secondary" id="selectionCount">{% trans "Selected" %}: 0</span>
                 <div class="vr text-secondary"></div>
-                <button type="submit" name="action" value="reanalyze" class="btn btn-sm btn-outline-primary" id="btnReanalyze" disabled title="Restart AI analysis for selected items">
-                    <i class="bi bi-arrow-repeat me-2"></i>Re-analyze
+                <button type="submit" name="action" value="reanalyze" class="btn btn-sm btn-outline-primary" id="btnReanalyze" disabled title="{% trans 'Restart AI analysis for selected items' %}">
+                    <i class="bi bi-arrow-repeat me-2"></i>{% trans "Re-analyze" %}
                 </button>
-                <button type="submit" name="action" value="delete" class="btn btn-sm btn-outline-danger" id="btnDelete" disabled onclick="return confirm('Are you sure you want to delete selected items?')" title="Permanently delete selected items">
-                    <i class="bi bi-trash me-2"></i>Delete
+                <button type="submit" name="action" value="delete" class="btn btn-sm btn-outline-danger" id="btnDelete" disabled onclick="return confirm('{% trans 'Are you sure you want to delete selected items?' %}')" title="{% trans 'Permanently delete selected items' %}">
+                    <i class="bi bi-trash me-2"></i>{% trans "Delete" %}
                 </button>
             </div>
-            <small class="text-secondary"><i class="bi bi-info-circle me-1"></i>Select items to perform actions</small>
+            <small class="text-secondary"><i class="bi bi-info-circle me-1"></i>{% trans "Select items to perform actions" %}</small>
         </div>
 
         <div class="table-responsive">
@@ -31,11 +32,11 @@
                         <th style="width: 40px;">
                             <input type="checkbox" class="form-check-input" id="selectAll">
                         </th>
-                        <th>Title</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Actions</th>
+                        <th>{% trans "Title" %}</th>
+                        <th>{% trans "Type" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Created" %}</th>
+                        <th>{% trans "Actions" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,22 +59,22 @@
                         </td>
                         <td>
                             {% if item.status == 'completed' %}
-                                <span class="badge bg-success">Completed</span>
+                                <span class="badge bg-success">{% trans "Completed" %}</span>
                             {% elif item.status == 'processing' %}
-                                <span class="badge bg-warning text-dark">Processing</span>
+                                <span class="badge bg-warning text-dark">{% trans "Processing" %}</span>
                             {% elif item.status == 'failed' %}
-                                <span class="badge bg-danger">Failed</span>
+                                <span class="badge bg-danger">{% trans "Failed" %}</span>
                             {% else %}
-                                <span class="badge bg-secondary">Pending</span>
+                                <span class="badge bg-secondary">{% trans "Pending" %}</span>
                             {% endif %}
                         </td>
                         <td>{{ item.created_at|date:"M d, Y" }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{% url 'library:update' item.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                <a href="{% url 'library:update' item.pk %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="{% url 'library:delete' item.pk %}" class="btn btn-outline-danger" title="Delete">
+                                <a href="{% url 'library:delete' item.pk %}" class="btn btn-outline-danger" title="{% trans 'Delete' %}">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
@@ -83,7 +84,7 @@
                     <tr>
                         <td colspan="6" class="text-center py-5 text-secondary">
                             <i class="bi bi-folder2-open display-4 d-block mb-3"></i>
-                            No media items found. <a href="{% url 'library:upload' %}" class="text-primary">Upload one</a> to get started.
+                            {% blocktrans %}No media items found. <a href="{{ upload_url }}" class="text-primary">Upload one</a> to get started.{% endblocktrans %}
                         </td>
                     </tr>
                     {% endfor %}
@@ -102,7 +103,7 @@
 
             function updateToolbar() {
                 const checkedCount = document.querySelectorAll('.media-checkbox:checked').length;
-                selectionCount.textContent = `Selected: ${checkedCount}`;
+                selectionCount.textContent = `{% trans "Selected" %}: ${checkedCount}`;
                 
                 const hasSelection = checkedCount > 0;
                 btnReanalyze.disabled = !hasSelection;

@@ -1,17 +1,18 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="card bg-dark text-light mx-auto my-5 container-delete card-custom" style="box-shadow: 0 2px 4px rgba(0,0,0,0.4);">
     <div class="card-body text-center">
-        <h2 class="mb-4 text-danger">Delete Media Item?</h2>
-        <p>Are you sure you want to delete "<strong>{{ object.title }}</strong>"?</p>
-        <p class="text-secondary mb-4">This action cannot be undone.</p>
+        <h2 class="mb-4 text-danger">{% trans "Delete Media Item?" %}</h2>
+        <p>{% blocktrans with title=object.title %}Are you sure you want to delete "<strong>{{ title }}</strong>"?{% endblocktrans %}</p>
+        <p class="text-secondary mb-4">{% trans "This action cannot be undone." %}</p>
 
         <form method="post">
             {% csrf_token %}
             <div class="d-flex justify-content-center gap-2 mt-4">
-                <button type="submit" class="btn btn-danger px-4">Confirm Delete</button>
-                <a href="{% url 'library:detail' object.id %}" class="btn btn-secondary px-4">Cancel</a>
+                <button type="submit" class="btn btn-danger px-4">{% trans "Confirm Delete" %}</button>
+                <a href="{% url 'library:detail' object.id %}" class="btn btn-secondary px-4">{% trans "Cancel" %}</a>
             </div>
         </form>
     </div>

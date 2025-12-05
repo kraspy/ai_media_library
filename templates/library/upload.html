@@ -1,24 +1,25 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="card bg-dark text-light mx-auto my-5 shadow container-form card-custom">
     <div class="card-body">
-        <h1 class="mb-4">Upload Media</h1>
+        <h1 class="mb-4">{% trans "Upload Media" %}</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="mb-3">
-                <label class="form-label">Files (Select multiple):</label>
+                <label class="form-label">{% trans "Files (Select multiple)" %}:</label>
                 <input type="file" name="file" multiple required class="form-control">
             </div>
             <div class="mb-3">
-                <label class="form-label">Topic:</label>
+                <label class="form-label">{% trans "Topic" %}:</label>
                 {{ form.topic }}
             </div>
             <div class="mb-3">
-                <label class="form-label">Tags:</label>
+                <label class="form-label">{% trans "Tags" %}:</label>
                 {{ form.tags }}
             </div>
-            <button type="submit" class="btn btn-success px-4">Upload</button>
+            <button type="submit" class="btn btn-success px-4">{% trans "Upload" %}</button>
         </form>
     </div>
 </div>

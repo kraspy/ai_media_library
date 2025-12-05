@@ -1,0 +1,667 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-05 14:36+0000\n"
+"PO-Revision-Date: 2025-12-05 21:50+0700\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: apps/core/models.py:19
+msgid "Select transcription engine."
+msgstr "Выберите движок транскрипции."
+
+#: apps/core/models.py:20 templates/core/settings.html:14
+msgid "Transcription Engine"
+msgstr "Движок транскрипции"
+
+#: apps/core/models.py:26
+msgid "Select LLM provider."
+msgstr "Выберите LLM провайдера."
+
+#: apps/core/models.py:27 templates/core/settings.html:18
+msgid "LLM Provider"
+msgstr "LLM Провайдер"
+
+#: apps/core/models.py:31
+msgid "System prompt for Summarization."
+msgstr "Системный промпт для суммаризации."
+
+#: apps/core/models.py:32 templates/core/settings.html:26
+msgid "Summarization Prompt"
+msgstr "Промпт для суммаризации"
+
+#: apps/core/models.py:52 apps/core/models.py:55 apps/core/models.py:56
+#: templates/base.html:19
+msgid "Settings"
+msgstr "Настройки"
+
+#: apps/learning/models.py:14 apps/library/models.py:22
+#: apps/library/models.py:57 templates/library/list.html:35
+#: templates/library/update.html:11
+msgid "Title"
+msgstr "Название"
+
+#: apps/learning/models.py:15
+msgid "Description"
+msgstr "Описание"
+
+#: apps/learning/models.py:20 apps/learning/models.py:106
+#: apps/library/models.py:90
+msgid "Media Item"
+msgstr "Медиафайл"
+
+#: apps/learning/models.py:23
+msgid "Complexity"
+msgstr "Сложность"
+
+#: apps/learning/models.py:23
+msgid "Complexity level (1-5)"
+msgstr "Уровень сложности (1-5)"
+
+#: apps/learning/models.py:25 apps/learning/models.py:68
+#: apps/learning/models.py:114 apps/learning/models.py:180
+#: apps/library/models.py:24 apps/library/models.py:78
+msgid "Created At"
+msgstr "Создано"
+
+#: apps/learning/models.py:28 apps/learning/models.py:50
+#: apps/learning/models.py:139 apps/learning/models.py:166
+msgid "Concept"
+msgstr "Концепция"
+
+#: apps/learning/models.py:29
+msgid "Concepts"
+msgstr "Концепции"
+
+#: apps/learning/models.py:44 apps/learning/models.py:92
+#: apps/library/models.py:12 apps/library/models.py:55
+msgid "User"
+msgstr "Пользователь"
+
+#: apps/learning/models.py:52
+msgid "Front"
+msgstr "Лицевая сторона"
+
+#: apps/learning/models.py:52
+msgid "Question or front side"
+msgstr "Вопрос или лицевая сторона"
+
+#: apps/learning/models.py:53 templates/learning/plan_detail.html:23
+msgid "Back"
+msgstr "Назад"
+
+#: apps/learning/models.py:53
+msgid "Answer or back side"
+msgstr "Ответ или обратная сторона"
+
+#: apps/learning/models.py:57
+msgid "Repetitions"
+msgstr "Повторения"
+
+#: apps/learning/models.py:57
+msgid "Number of repetitions"
+msgstr "Количество повторений"
+
+#: apps/learning/models.py:60
+msgid "Interval"
+msgstr "Интервал"
+
+#: apps/learning/models.py:60
+msgid "Days until next review"
+msgstr "Дней до следующего повторения"
+
+#: apps/learning/models.py:63
+msgid "Ease Factor"
+msgstr "Фактор легкости"
+
+#: apps/learning/models.py:63
+msgid "Easiness factor"
+msgstr "Фактор легкости"
+
+#: apps/learning/models.py:65
+msgid "Last Review"
+msgstr "Последнее повторение"
+
+#: apps/learning/models.py:66
+msgid "Next Review"
+msgstr "Следующее повторение"
+
+#: apps/learning/models.py:71
+msgid "Flashcard"
+msgstr "Флеш-карточка"
+
+#: apps/learning/models.py:72
+msgid "Flashcards"
+msgstr "Флеш-карточки"
+
+#: apps/learning/models.py:84
+msgid "Active"
+msgstr "Активно"
+
+#: apps/learning/models.py:85 apps/library/models.py:48
+#: templates/library/list.html:62
+msgid "Completed"
+msgstr "Завершено"
+
+#: apps/learning/models.py:86
+msgid "Archived"
+msgstr "Архивировано"
+
+#: apps/learning/models.py:100 apps/library/models.py:29
+#: apps/library/models.py:85 templates/library/detail.html:18
+#: templates/library/update.html:15 templates/library/upload.html:15
+msgid "Topic"
+msgstr "Тема"
+
+#: apps/learning/models.py:109 apps/library/models.py:66
+#: templates/library/detail.html:17 templates/library/list.html:37
+msgid "Status"
+msgstr "Статус"
+
+#: apps/learning/models.py:117 apps/learning/models.py:133
+#: templates/learning/plan_detail.html:4
+msgid "Study Plan"
+msgstr "Учебный план"
+
+#: apps/learning/models.py:118
+msgid "Study Plans"
+msgstr "Учебные планы"
+
+#: apps/learning/models.py:141
+msgid "Order"
+msgstr "Порядок"
+
+#: apps/learning/models.py:142
+msgid "Is Completed"
+msgstr "Завершено"
+
+#: apps/learning/models.py:146
+msgid "Study Unit"
+msgstr "Учебный блок"
+
+#: apps/learning/models.py:147
+msgid "Study Units"
+msgstr "Учебные блоки"
+
+#: apps/learning/models.py:159
+msgid "Multiple Choice"
+msgstr "Выбор ответа"
+
+#: apps/learning/models.py:160
+msgid "Open Answer"
+msgstr "Открытый ответ"
+
+#: apps/learning/models.py:169
+msgid "Question Data"
+msgstr "Данные вопроса"
+
+#: apps/learning/models.py:171
+msgid "JSON structure with question, options, correct_answer, explanation"
+msgstr "Структура JSON с вопросом, вариантами, правильным ответом, объяснением"
+
+#: apps/learning/models.py:175
+msgid "Question Type"
+msgstr "Тип вопроса"
+
+#: apps/learning/models.py:183
+msgid "Quiz Question"
+msgstr "Вопрос"
+
+#: apps/learning/models.py:184
+msgid "Quiz Questions"
+msgstr "Вопросы"
+
+#: apps/library/models.py:20
+msgid "Parent Topic"
+msgstr "Родительская тема"
+
+#: apps/library/models.py:23
+msgid "Slug"
+msgstr "Слаг"
+
+#: apps/library/models.py:30
+msgid "Topics"
+msgstr "Темы"
+
+#: apps/library/models.py:40
+msgid "Audio"
+msgstr "Аудио"
+
+#: apps/library/models.py:41
+msgid "Video"
+msgstr "Видео"
+
+#: apps/library/models.py:42
+msgid "Image"
+msgstr "Изображение"
+
+#: apps/library/models.py:43
+msgid "Text"
+msgstr "Текст"
+
+#: apps/library/models.py:46 templates/library/list.html:68
+msgid "Pending"
+msgstr "Ожидает"
+
+#: apps/library/models.py:47 templates/library/list.html:64
+msgid "Processing"
+msgstr "Обработка"
+
+#: apps/library/models.py:49 templates/learning/quiz.html:21
+#: templates/library/list.html:66
+msgid "Failed"
+msgstr "Ошибка"
+
+#: apps/library/models.py:58 templates/library/detail.html:22
+msgid "File"
+msgstr "Файл"
+
+#: apps/library/models.py:60
+msgid "Media Type"
+msgstr "Тип медиа"
+
+#: apps/library/models.py:71
+msgid "Transcription"
+msgstr "Транскрипция"
+
+#: apps/library/models.py:72 templates/library/detail.html:30
+msgid "Summary"
+msgstr "Сводка"
+
+#: apps/library/models.py:74 templates/library/detail.html:48
+msgid "Error Log"
+msgstr "Журнал ошибок"
+
+#: apps/library/models.py:76
+msgid "Stores stack traces for failed tasks."
+msgstr "Хранит стектрейсы упавших задач."
+
+#: apps/library/models.py:87 templates/library/detail.html:19
+#: templates/library/update.html:19 templates/library/upload.html:19
+msgid "Tags"
+msgstr "Теги"
+
+#: apps/library/models.py:91
+msgid "Media Items"
+msgstr "Медиафайлы"
+
+#: config/settings.py:108
+msgid "English"
+msgstr "Английский"
+
+#: config/settings.py:109
+msgid "Russian"
+msgstr "Русский"
+
+#: templates/base.html:8
+msgid "AI Media Library"
+msgstr "AI Медиатека"
+
+#: templates/base.html:18
+msgid "Home"
+msgstr "Главная"
+
+#: templates/base.html:20
+msgid "Admin"
+msgstr "Админка"
+
+#: templates/base.html:21
+msgid "Learning"
+msgstr "Обучение"
+
+#: templates/base.html:40
+msgid "Welcome"
+msgstr "Добро пожаловать"
+
+#: templates/base.html:41
+msgid "Logout"
+msgstr "Выйти"
+
+#: templates/base.html:43 templates/users/login.html:7
+#: templates/users/login.html:18
+msgid "Login"
+msgstr "Войти"
+
+#: templates/base.html:52
+msgid "AI Media Library. All rights reserved."
+msgstr "AI Медиатека. Все права защищены."
+
+#: templates/core/settings.html:7
+msgid "Project Settings"
+msgstr "Настройки проекта"
+
+#: templates/core/settings.html:12
+msgid "AI Engines"
+msgstr "AI Движки"
+
+#: templates/core/settings.html:24
+msgid "Prompts"
+msgstr "Промпты"
+
+#: templates/core/settings.html:31
+msgid "Save Settings"
+msgstr "Сохранить настройки"
+
+#: templates/learning/dashboard.html:4 templates/learning/dashboard.html:10
+msgid "Learning Dashboard"
+msgstr "Панель обучения"
+
+#: templates/learning/dashboard.html:11
+msgid "Track your progress and review materials."
+msgstr "Отслеживайте прогресс и повторяйте изученное."
+
+#: templates/learning/dashboard.html:21
+msgid "Spaced Repetition"
+msgstr "Интервальное повторение"
+
+#: templates/learning/dashboard.html:23
+#, python-format
+msgid ""
+"You have <strong class=\"text-warning\">%(count)s</strong> card due for "
+"review today."
+msgid_plural ""
+"You have <strong class=\"text-warning\">%(count)s</strong> cards due for "
+"review today."
+msgstr[0] "У вас <strong class=\"text-warning\">%(count)s</strong> карточка для повторения сегодня."
+msgstr[1] "У вас <strong class=\"text-warning\">%(count)s</strong> карточки для повторения сегодня."
+msgstr[2] "У вас <strong class=\"text-warning\">%(count)s</strong> карточек для повторения сегодня."
+msgstr[3] "У вас <strong class=\"text-warning\">%(count)s</strong> карточек для повторения сегодня."
+
+#: templates/learning/dashboard.html:28
+msgid "Start Review"
+msgstr "Начать повторение"
+
+#: templates/learning/dashboard.html:32
+msgid "All Caught Up"
+msgstr "Всё повторено"
+
+#: templates/learning/dashboard.html:43
+msgid "Active Study Plans"
+msgstr "Активные учебные планы"
+
+#: templates/learning/dashboard.html:56 templates/learning/plan_detail.html:16
+msgid "Custom Plan"
+msgstr "Пользовательский план"
+
+#: templates/learning/dashboard.html:60 templates/library/list.html:38
+msgid "Created"
+msgstr "Создано"
+
+#: templates/learning/dashboard.html:69
+#, python-format
+msgid "%(completed)s / %(total)s units"
+msgstr "%(completed)s / %(total)s блоков"
+
+#: templates/learning/dashboard.html:70
+msgid "View Plan"
+msgstr "Смотреть план"
+
+#: templates/learning/dashboard.html:79
+msgid "No active study plans. Go to the Library to create one!"
+msgstr "Нет активных учебных планов. Создайте их в Библиотеке!"
+
+#: templates/learning/dashboard.html:86
+msgid "Recent Activity"
+msgstr "Недавняя активность"
+
+#: templates/learning/dashboard.html:98
+msgid "No recent activity."
+msgstr "Нет активности."
+
+#: templates/learning/plan_detail.html:30
+msgid "Curriculum"
+msgstr "Программа"
+
+#: templates/learning/plan_detail.html:46
+msgid "Done"
+msgstr "Готово"
+
+#: templates/learning/plan_detail.html:48
+msgid "Start"
+msgstr "Начать"
+
+#: templates/learning/plan_detail.html:54
+msgid "No units in this plan yet."
+msgstr "В этом плане пока нет блоков."
+
+#: templates/learning/plan_detail.html:64
+msgid "Progress"
+msgstr "Прогресс"
+
+#: templates/learning/plan_detail.html:72
+#, python-format
+msgid "%(completed)s of %(total)s units completed"
+msgstr "Завершено %(completed)s из %(total)s блоков"
+
+#: templates/learning/quiz.html:4 templates/learning/quiz.html:12
+msgid "Quiz"
+msgstr "Квиз"
+
+#: templates/learning/quiz.html:19
+msgid "Passed!"
+msgstr "Сдано!"
+
+#: templates/learning/quiz.html:24
+#, python-format
+msgid "You scored %(score)s out of %(total)s (%(percent)s%%)"
+msgstr "Вы набрали %(score)s из %(total)s (%(percent)s%%)"
+
+#: templates/learning/quiz.html:32
+msgid "Your Answer"
+msgstr "Ваш ответ"
+
+#: templates/learning/quiz.html:42
+msgid "Correct Answer"
+msgstr "Правильный ответ"
+
+#: templates/learning/quiz.html:48
+msgid "Explanation"
+msgstr "Пояснение"
+
+#: templates/learning/quiz.html:55
+msgid "Retry Quiz"
+msgstr "Повторить квиз"
+
+#: templates/learning/quiz.html:57
+msgid "Continue Learning"
+msgstr "Продолжить обучение"
+
+#: templates/learning/quiz.html:59
+msgid "Back to Plan"
+msgstr "Назад к плану"
+
+#: templates/learning/quiz.html:81
+msgid "Submit Answers"
+msgstr "Отправить ответы"
+
+#: templates/learning/session_complete.html:4
+msgid "Session Complete"
+msgstr "Сессия завершена"
+
+#: templates/learning/session_complete.html:13
+msgid "Session Complete!"
+msgstr "Сессия завершена!"
+
+#: templates/learning/session_complete.html:14
+msgid "You've reviewed all your cards for today. Great job!"
+msgstr "Вы повторили все карточки на сегодня. Отличная работа!"
+
+#: templates/learning/session_complete.html:16
+msgid "Back to Dashboard"
+msgstr "Назад в дашборд"
+
+#: templates/learning/study_session.html:5
+#: templates/learning/study_session.html:12
+msgid "Study Session"
+msgstr "Сессия обучения"
+
+#: templates/learning/study_session.html:13
+#, python-format
+msgid "%(count)s cards remaining"
+msgstr "Осталось %(count)s карточек"
+
+#: templates/learning/study_session.html:24
+msgid "Show Answer"
+msgstr "Показать ответ"
+
+#: templates/learning/study_session.html:36
+msgid "How well did you know this?"
+msgstr "Насколько хорошо вы это знали?"
+
+#: templates/learning/study_session.html:41
+msgid "Blackout"
+msgstr "Забыл"
+
+#: templates/learning/study_session.html:41
+msgid "Again"
+msgstr "Снова"
+
+#: templates/learning/study_session.html:42
+msgid "Hard"
+msgstr "Трудно"
+
+#: templates/learning/study_session.html:43
+msgid "Good"
+msgstr "Хорошо"
+
+#: templates/learning/study_session.html:44
+msgid "Perfect"
+msgstr "Идеально"
+
+#: templates/learning/study_session.html:44
+msgid "Easy"
+msgstr "Легко"
+
+#: templates/learning/study_session.html:52
+msgid "Exit Session"
+msgstr "Выйти из сессии"
+
+#: templates/library/delete.html:7
+msgid "Delete Media Item?"
+msgstr "Удалить медиафайл?"
+
+#: templates/library/delete.html:8
+#, python-format
+msgid "Are you sure you want to delete \"<strong>%(title)s</strong>\"?"
+msgstr "Вы уверены, что хотите удалить \"<strong>%(title)s</strong>\"?"
+
+#: templates/library/delete.html:9
+msgid "This action cannot be undone."
+msgstr "Это действие нельзя отменить."
+
+#: templates/library/delete.html:14
+msgid "Confirm Delete"
+msgstr "Подтвердить удаление"
+
+#: templates/library/delete.html:15 templates/library/update.html:24
+msgid "Cancel"
+msgstr "Отмена"
+
+#: templates/library/detail.html:9 templates/library/list.html:74
+msgid "Edit"
+msgstr "Редактировать"
+
+#: templates/library/detail.html:10 templates/library/list.html:22
+#: templates/library/list.html:77
+msgid "Delete"
+msgstr "Удалить"
+
+#: templates/library/detail.html:16 templates/library/list.html:36
+msgid "Type"
+msgstr "Тип"
+
+#: templates/library/detail.html:20
+msgid "Date"
+msgstr "Дата"
+
+#: templates/library/detail.html:22
+msgid "Download/View"
+msgstr "Скачать/Просмотреть"
+
+#: templates/library/detail.html:39
+msgid "Transcription / Content"
+msgstr "Транскрипция / Контент"
+
+#: templates/library/list.html:7
+msgid "Media Library"
+msgstr "Медиатека"
+
+#: templates/library/list.html:8
+msgid "Upload New Media"
+msgstr "Загрузить новый медиафайл"
+
+#: templates/library/list.html:16 templates/library/list.html:106
+msgid "Selected"
+msgstr "Выбрано"
+
+#: templates/library/list.html:18
+msgid "Restart AI analysis for selected items"
+msgstr "Перезапустить AI анализ для выбранных элементов"
+
+#: templates/library/list.html:19
+msgid "Re-analyze"
+msgstr "Переанализировать"
+
+#: templates/library/list.html:21
+msgid "Are you sure you want to delete selected items?"
+msgstr "Вы уверены, что хотите удалить выбранные элементы?"
+
+#: templates/library/list.html:21
+msgid "Permanently delete selected items"
+msgstr "Безвозвратно удалить выбранные элементы"
+
+#: templates/library/list.html:25
+msgid "Select items to perform actions"
+msgstr "Выберите элементы для действий"
+
+#: templates/library/list.html:39
+msgid "Actions"
+msgstr "Действия"
+
+#: templates/library/list.html:87
+#, python-format
+msgid ""
+"No media items found. <a href=\"%(upload_url)s\" class=\"text-"
+"primary\">Upload one</a> to get started."
+msgstr "Медиафайлы не найдены. <a href=\"%(upload_url)s\" class=\"text-primary\">Загрузите первый</a>, чтобы начать."
+
+#: templates/library/update.html:7
+msgid "Edit Media Item"
+msgstr "Редактировать медиафайл"
+
+#: templates/library/update.html:23
+msgid "Save Changes"
+msgstr "Сохранить изменения"
+
+#: templates/library/upload.html:7
+msgid "Upload Media"
+msgstr "Загрузить медиа"
+
+#: templates/library/upload.html:11
+msgid "Files (Select multiple)"
+msgstr "Файлы (можно несколько)"
+
+#: templates/library/upload.html:22
+msgid "Upload"
+msgstr "Загрузить"
+
+#: templates/users/login.html:11
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: templates/users/login.html:15
+msgid "Password"
+msgstr "Пароль"

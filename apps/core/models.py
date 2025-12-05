@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class ProjectSettings(models.Model):
@@ -15,17 +16,20 @@ class ProjectSettings(models.Model):
         max_length=20,
         choices=TranscriptionEngine.choices,
         default=TranscriptionEngine.WHISPERX,
-        help_text='Select transcription engine.',
+        help_text=_('Select transcription engine.'),
+        verbose_name=_('Transcription Engine'),
     )
     llm_provider = models.CharField(
         max_length=20,
         choices=LLMProvider.choices,
         default=LLMProvider.OPENAI,
-        help_text='Select LLM provider.',
+        help_text=_('Select LLM provider.'),
+        verbose_name=_('LLM Provider'),
     )
     summarization_prompt = models.TextField(
         default='Please provide a concise summary of the following text.',
-        help_text='System prompt for Summarization.',
+        help_text=_('System prompt for Summarization.'),
+        verbose_name=_('Summarization Prompt'),
     )
 
     def save(self, *args, **kwargs):
@@ -45,8 +49,8 @@ class ProjectSettings(models.Model):
         return obj
 
     def __str__(self):
-        return 'Settings'
+        return str(_('Settings'))
 
     class Meta:
-        verbose_name = 'Settings'
-        verbose_name_plural = 'Settings'
+        verbose_name = _('Settings')
+        verbose_name_plural = _('Settings')

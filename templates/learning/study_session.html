@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% load markdown_extras %}
+{% load i18n %}
 
-{% block title %}Study Session{% endblock %}
+{% block title %}{% trans "Study Session" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="text-light">Study Session</h2>
-                <span class="badge bg-secondary">{{ cards_count }} cards remaining</span>
+                <h2 class="text-light">{% trans "Study Session" %}</h2>
+                <span class="badge bg-secondary">{% blocktrans with count=cards_count %}{{ count }} cards remaining{% endblocktrans %}</span>
             </div>
 
             <!-- Flashcard -->
@@ -20,7 +21,7 @@
                     <div id="card-front" class="w-100">
                         <h3 class="display-6 mb-4">{{ card.front }}</h3>
                         <button class="btn btn-primary btn-lg mt-3" onclick="showAnswer()">
-                            Show Answer
+                            {% trans "Show Answer" %}
                         </button>
                     </div>
 
@@ -32,15 +33,15 @@
                             {{ card.back|markdown|safe }}
                         </div>
                         
-                        <p class="text-secondary mb-3">How well did you know this?</p>
+                        <p class="text-secondary mb-3">{% trans "How well did you know this?" %}</p>
                         <form method="post" class="d-flex justify-content-center gap-2">
                             {% csrf_token %}
                             <input type="hidden" name="card_id" value="{{ card.id }}">
                             
-                            <button type="submit" name="quality" value="0" class="btn btn-outline-danger" title="Blackout">Again</button>
-                            <button type="submit" name="quality" value="3" class="btn btn-outline-warning" title="Hard">Hard</button>
-                            <button type="submit" name="quality" value="4" class="btn btn-outline-info" title="Good">Good</button>
-                            <button type="submit" name="quality" value="5" class="btn btn-outline-success" title="Perfect">Easy</button>
+                            <button type="submit" name="quality" value="0" class="btn btn-outline-danger" title="{% trans 'Blackout' %}">{% trans "Again" %}</button>
+                            <button type="submit" name="quality" value="3" class="btn btn-outline-warning" title="{% trans 'Hard' %}">{% trans "Hard" %}</button>
+                            <button type="submit" name="quality" value="4" class="btn btn-outline-info" title="{% trans 'Good' %}">{% trans "Good" %}</button>
+                            <button type="submit" name="quality" value="5" class="btn btn-outline-success" title="{% trans 'Perfect' %}">{% trans "Easy" %}</button>
                         </form>
                     </div>
 
@@ -48,7 +49,7 @@
             </div>
             
             <div class="text-center">
-                <a href="{% url 'learning:dashboard' %}" class="text-secondary text-decoration-none">Exit Session</a>
+                <a href="{% url 'learning:dashboard' %}" class="text-secondary text-decoration-none">{% trans "Exit Session" %}</a>
             </div>
         </div>
     </div>

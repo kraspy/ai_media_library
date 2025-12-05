@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
 
@@ -8,6 +9,7 @@ class Topic(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='topics',
+        verbose_name=_('User'),
     )
     parent = models.ForeignKey(
         'self',
@@ -15,14 +17,17 @@ class Topic(models.Model):
         null=True,
         blank=True,
         related_name='subtopics',
+        verbose_name=_('Parent Topic'),
     )
-    title = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(_('Title'), max_length=100)
+    slug = models.SlugField(_('Slug'), max_length=100)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'slug')
         ordering = ['title']
+        verbose_name = _('Topic')
+        verbose_name_plural = _('Topics')
 
     def __str__(self):
         if self.parent:
@@ -32,48 +37,58 @@ class Topic(models.Model):
 
 class MediaItem(models.Model):
     class MediaType(models.TextChoices):
-        AUDIO = 'audio', 'Audio'
-        VIDEO = 'video', 'Video'
-        IMAGE = 'image', 'Image'
-        TEXT = 'text', 'Text'
+        AUDIO = 'audio', _('Audio')
+        VIDEO = 'video', _('Video')
+        IMAGE = 'image', _('Image')
+        TEXT = 'text', _('Text')
 
     class Status(models.TextChoices):
-        PENDING = 'pending', 'Pending'
-        PROCESSING = 'processing', 'Processing'
-        COMPLETED = 'completed', 'Completed'
-        FAILED = 'failed', 'Failed'
+        PENDING = 'pending', _('Pending')
+        PROCESSING = 'processing', _('Processing')
+        COMPLETED = 'completed', _('Completed')
+        FAILED = 'failed', _('Failed')
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='media_items',
+        verbose_name=_('User'),
     )
-    title = models.CharField(max_length=255)
-    file = models.FileField(upload_to='uploads/%Y/%m/%d/')
+    title = models.CharField(_('Title'), max_length=255)
+    file = models.FileField(_('File'), upload_to='uploads/%Y/%m/%d/')
     media_type = models.CharField(
+        _('Media Type'),
         max_length=10,
         choices=MediaType.choices,
         default=MediaType.TEXT,
     )
     status = models.CharField(
+        _('Status'),
         max_length=20,
         choices=Status.choices,
         default=Status.PENDING,
     )
-    transcription = models.TextField(blank=True)
-    summary = models.TextField(blank=True)
+    transcription = models.TextField(_('Transcription'), blank=True)
+    summary = models.TextField(_('Summary'), blank=True)
     error_log = models.TextField(
-        blank=True, help_text='Stores stack traces for failed tasks.'
+        _('Error Log'),
+        blank=True,
+        help_text=_('Stores stack traces for failed tasks.'),
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
     topic = models.ForeignKey(
         Topic,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='media_items',
+        verbose_name=_('Topic'),
     )
-    tags = TaggableManager(blank=True)
+    tags = TaggableManager(_('Tags'), blank=True)
+
+    class Meta:
+        verbose_name = _('Media Item')
+        verbose_name_plural = _('Media Items')
 
     def __str__(self):
         return self.title

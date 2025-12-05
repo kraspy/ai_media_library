@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Session Complete{% endblock %}
+{% block title %}{% trans "Session Complete" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5 text-center">
@@ -9,10 +10,10 @@
             <div class="card bg-dark text-light border-0 shadow-lg p-5">
                 <div class="card-body">
                     <i class="bi bi-trophy-fill text-warning display-1 mb-4"></i>
-                    <h2 class="mb-3">Session Complete!</h2>
-                    <p class="lead text-secondary mb-4">You've reviewed all your cards for today. Great job!</p>
+                    <h2 class="mb-3">{% trans "Session Complete!" %}</h2>
+                    <p class="lead text-secondary mb-4">{% trans "You've reviewed all your cards for today. Great job!" %}</p>
                     <a href="{% url 'learning:dashboard' %}" class="btn btn-primary btn-lg">
-                        Back to Dashboard
+                        {% trans "Back to Dashboard" %}
                     </a>
                 </div>
             </div>

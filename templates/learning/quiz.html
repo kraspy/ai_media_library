@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Quiz: {{ unit.concept.title }}{% endblock %}
+{% block title %}{% trans "Quiz" %}: {{ unit.concept.title }}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
@@ -8,19 +9,19 @@
         <div class="col-md-8">
             <div class="card bg-dark text-light shadow card-custom">
                 <div class="card-header border-secondary">
-                    <h3 class="card-title mb-0">Quiz: {{ unit.concept.title }}</h3>
+                    <h3 class="card-title mb-0">{% trans "Quiz" %}: {{ unit.concept.title }}</h3>
                 </div>
                 <div class="card-body">
                     {% if is_submitted %}
                         <div class="alert {% if passed %}alert-success{% else %}alert-danger{% endif %} mb-4">
                             <h4 class="alert-heading">
                                 {% if passed %}
-                                    <i class="bi bi-check-circle-fill me-2"></i>Passed!
+                                    <i class="bi bi-check-circle-fill me-2"></i>{% trans "Passed!" %}
                                 {% else %}
-                                    <i class="bi bi-x-circle-fill me-2"></i>Failed
+                                    <i class="bi bi-x-circle-fill me-2"></i>{% trans "Failed" %}
                                 {% endif %}
                             </h4>
-                            <p class="mb-0">You scored {{ score }} out of {{ total }} ({{ percentage|floatformat:0 }}%)</p>
+                            <p class="mb-0">{% blocktrans with score=score total=total percent=percentage|floatformat:0 %}You scored {{ score }} out of {{ total }} ({{ percent }}%){% endblocktrans %}</p>
                         </div>
 
                         {% for result in results %}
@@ -28,7 +29,7 @@
                                 <p class="fw-bold mb-2">{{ result.question.question_data.question }}</p>
                                 
                                 <div class="mb-2">
-                                    <strong>Your Answer:</strong> {{ result.user_answer }}
+                                    <strong>{% trans "Your Answer" %}:</strong> {{ result.user_answer }}
                                     {% if result.is_correct %}
                                         <i class="bi bi-check-lg"></i>
                                     {% else %}
@@ -38,24 +39,24 @@
 
                                 {% if not result.is_correct %}
                                     <div class="mb-2 text-success">
-                                        <strong>Correct Answer:</strong> {{ result.correct_answer }}
+                                        <strong>{% trans "Correct Answer" %}:</strong> {{ result.correct_answer }}
                                     </div>
                                 {% endif %}
 
                                 {% if result.explanation %}
                                     <div class="mt-2 small border-top border-secondary pt-2">
-                                        <strong>Explanation:</strong> {{ result.explanation }}
+                                        <strong>{% trans "Explanation" %}:</strong> {{ result.explanation }}
                                     </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
 
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="{% url 'learning:quiz' unit.pk %}" class="btn btn-outline-light">Retry Quiz</a>
+                            <a href="{% url 'learning:quiz' unit.pk %}" class="btn btn-outline-light">{% trans "Retry Quiz" %}</a>
                             {% if passed %}
-                                <a href="{% url 'learning:plan_detail' unit.plan.pk %}" class="btn btn-success">Continue Learning</a>
+                                <a href="{% url 'learning:plan_detail' unit.plan.pk %}" class="btn btn-success">{% trans "Continue Learning" %}</a>
                             {% else %}
-                                <a href="{% url 'learning:plan_detail' unit.plan.pk %}" class="btn btn-secondary">Back to Plan</a>
+                                <a href="{% url 'learning:plan_detail' unit.plan.pk %}" class="btn btn-secondary">{% trans "Back to Plan" %}</a>
                             {% endif %}
                         </div>
 
@@ -77,7 +78,7 @@
                             {% endfor %}
                             
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">Submit Answers</button>
+                                <button type="submit" class="btn btn-primary btn-lg">{% trans "Submit Answers" %}</button>
                             </div>
                         </form>
                     {% endif %}

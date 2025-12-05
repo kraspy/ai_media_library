@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+{% load static %}
+{% load i18n %}
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Media Library</title>
-    {% load static %}
+    <title>{% trans "AI Media Library" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <!-- PrismJS -->
@@ -14,17 +15,32 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
         <div class="container">
             <div class="navbar-nav me-auto mb-2 mb-lg-0">
-                <a class="nav-link fw-semibold text-light" href="{% url 'library:list' %}">Home</a>
-                <a class="nav-link fw-semibold text-light" href="{% url 'core:settings' %}">Settings</a>
-                <a class="nav-link fw-semibold text-light" href="/admin/">Admin</a>
-                <a class="nav-link fw-semibold text-light" href="{% url 'learning:dashboard' %}">Learning</a>
+                <a class="nav-link fw-semibold text-light" href="{% url 'library:list' %}">{% trans "Home" %}</a>
+                <a class="nav-link fw-semibold text-light" href="{% url 'core:settings' %}">{% trans "Settings" %}</a>
+                <a class="nav-link fw-semibold text-light" href="/admin/">{% trans "Admin" %}</a>
+                <a class="nav-link fw-semibold text-light" href="{% url 'learning:dashboard' %}">{% trans "Learning" %}</a>
             </div>
             <div class="d-flex align-items-center">
+                <form action="{% url 'set_language' %}" method="post" class="me-3">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select name="language" class="form-select form-select-sm bg-dark text-light border-secondary" onchange="this.form.submit()">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                {{ language.name_local }} ({{ language.code }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+
                 {% if user.is_authenticated %}
-                    <span class="me-2 text-info fw-bold">Welcome, {{ user.username }}</span>
-                    <a class="btn btn-secondary me-2" href="{% url 'users:logout' %}">Logout</a>
+                    <span class="me-2 text-info fw-bold">{% trans "Welcome" %}, {{ user.username }}</span>
+                    <a class="btn btn-secondary me-2" href="{% url 'users:logout' %}">{% trans "Logout" %}</a>
                 {% else %}
-                    <a class="btn btn-info" href="{% url 'users:login' %}">Login</a>
+                    <a class="btn btn-info" href="{% url 'users:login' %}">{% trans "Login" %}</a>
                 {% endif %}
             </div>
         </div>
@@ -33,7 +49,7 @@
         {% block content %}{% endblock %}
     </main>
     <footer class="mt-5 mb-3 text-center text-secondary small">
-        &copy; {{ now|date:"Y" }} AI Media Library. All rights reserved.
+        &copy; {{ now|date:"Y" }} {% trans "AI Media Library. All rights reserved." %}
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/script.js' %}"></script>

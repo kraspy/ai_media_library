@@ -1,33 +1,34 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="card bg-dark text-light mx-auto my-5 shadow container-detail card-custom">
     <div class="card-body">
-        <h1 class="mb-4">Project Settings</h1>
+        <h1 class="mb-4">{% trans "Project Settings" %}</h1>
         <form method="post">
             {% csrf_token %}
             
             <div class="mb-4">
-                <h3 class="mb-3">AI Engines</h3>
+                <h3 class="mb-3">{% trans "AI Engines" %}</h3>
                 <div class="mb-2">
-                    <label class="form-label fw-bold">Transcription Engine:</label>
+                    <label class="form-label fw-bold">{% trans "Transcription Engine" %}:</label>
                     {{ form.transcription_engine }}
                 </div>
                 <div class="mb-2">
-                    <label class="form-label fw-bold">LLM Provider:</label>
+                    <label class="form-label fw-bold">{% trans "LLM Provider" %}:</label>
                     {{ form.llm_provider }}
                 </div>
             </div>
 
             <div class="mb-4">
-                <h3 class="mb-3">Prompts</h3>
+                <h3 class="mb-3">{% trans "Prompts" %}</h3>
                 <div class="mb-2">
-                    <label class="form-label fw-bold">Summarization Prompt:</label>
+                    <label class="form-label fw-bold">{% trans "Summarization Prompt" %}:</label>
                     {{ form.summarization_prompt }}
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-info px-4">Save Settings</button>
+            <button type="submit" class="btn btn-info px-4">{% trans "Save Settings" %}</button>
         </form>
     </div>
 </div>

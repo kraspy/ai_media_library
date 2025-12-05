@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Study Plan: {{ plan.topic.title|default:plan.media_item.title }}{% endblock %}
+{% block title %}{% trans "Study Plan" %}: {{ plan.topic.title|default:plan.media_item.title }}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -12,21 +13,21 @@
                 {% elif plan.media_item %}
                     {{ plan.media_item.title }}
                 {% else %}
-                    Custom Plan
+                    {% trans "Custom Plan" %}
                 {% endif %}
             </h1>
             <span class="badge {% if plan.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">
                 {{ plan.get_status_display }}
             </span>
         </div>
-        <a href="{% url 'learning:dashboard' %}" class="btn btn-outline-secondary">Back</a>
+        <a href="{% url 'learning:dashboard' %}" class="btn btn-outline-secondary">{% trans "Back" %}</a>
     </div>
 
     <div class="row">
         <div class="col-md-8">
             <div class="card bg-dark text-light border-secondary">
                 <div class="card-header border-secondary">
-                    <h5 class="mb-0">Curriculum</h5>
+                    <h5 class="mb-0">{% trans "Curriculum" %}</h5>
                 </div>
                 <ul class="list-group list-group-flush">
                     {% for unit in plan.units.all %}
@@ -42,15 +43,15 @@
                         </div>
                         <div>
                             {% if unit.is_completed %}
-                                <span class="badge bg-success"><i class="bi bi-check-lg"></i> Done</span>
+                                <span class="badge bg-success"><i class="bi bi-check-lg"></i> {% trans "Done" %}</span>
                             {% else %}
-                                <a href="{% url 'learning:quiz' unit.id %}" class="btn btn-sm btn-outline-primary">Start</a>
+                                <a href="{% url 'learning:quiz' unit.id %}" class="btn btn-sm btn-outline-primary">{% trans "Start" %}</a>
                             {% endif %}
                         </div>
                     </li>
                     {% empty %}
                     <li class="list-group-item bg-transparent text-secondary">
-                        No units in this plan yet.
+                        {% trans "No units in this plan yet." %}
                     </li>
                     {% endfor %}
                 </ul>
@@ -60,7 +61,7 @@
         <div class="col-md-4">
             <div class="card bg-dark text-light border-secondary mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">Progress</h5>
+                    <h5 class="card-title">{% trans "Progress" %}</h5>
                     <div class="progress mb-3" style="height: 20px;">
                         <div class="progress-bar bg-success" role="progressbar" 
                              style="width: 0%;" 
@@ -68,7 +69,7 @@
                              0%
                         </div>
                     </div>
-                    <p class="text-secondary small">0 of {{ plan.units.count }} units completed</p>
+                    <p class="text-secondary small">{% blocktrans with completed=0 total=plan.units.count %}{{ completed }} of {{ total }} units completed{% endblocktrans %}</p>
                 </div>
             </div>
         </div>

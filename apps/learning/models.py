@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from apps.library.models import MediaItem, Topic
 
@@ -10,15 +11,22 @@ class Concept(models.Model):
     An atomic unit of knowledge extracted from a MediaItem.
     """
 
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    title = models.CharField(_('Title'), max_length=255)
+    description = models.TextField(_('Description'), blank=True)
     media_item = models.ForeignKey(
-        MediaItem, on_delete=models.CASCADE, related_name='concepts'
+        MediaItem,
+        on_delete=models.CASCADE,
+        related_name='concepts',
+        verbose_name=_('Media Item'),
     )
     complexity = models.PositiveIntegerField(
-        default=1, help_text='Complexity level (1-5)'
+        _('Complexity'), default=1, help_text=_('Complexity level (1-5)')
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Concept')
+        verbose_name_plural = _('Concepts')
 
     def __str__(self):
         return self.title
@@ -33,27 +41,35 @@ class Flashcard(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='flashcards',
+        verbose_name=_('User'),
     )
     concept = models.ForeignKey(
         Concept,
         on_delete=models.CASCADE,
         related_name='flashcards',
+        verbose_name=_('Concept'),
     )
-    front = models.TextField(help_text='Question or front side')
-    back = models.TextField(help_text='Answer or back side')
+    front = models.TextField(_('Front'), help_text=_('Question or front side'))
+    back = models.TextField(_('Back'), help_text=_('Answer or back side'))
 
     # SRS Fields
     reps = models.PositiveIntegerField(
-        default=0, help_text='Number of repetitions'
+        _('Repetitions'), default=0, help_text=_('Number of repetitions')
     )
     interval = models.PositiveIntegerField(
-        default=0, help_text='Days until next review'
+        _('Interval'), default=0, help_text=_('Days until next review')
     )
-    ease_factor = models.FloatField(default=2.5, help_text='Easiness factor')
-    last_review = models.DateField(null=True, blank=True)
-    next_review = models.DateField(default=timezone.now)
+    ease_factor = models.FloatField(
+        _('Ease Factor'), default=2.5, help_text=_('Easiness factor')
+    )
+    last_review = models.DateField(_('Last Review'), null=True, blank=True)
+    next_review = models.DateField(_('Next Review'), default=timezone.now)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Flashcard')
+        verbose_name_plural = _('Flashcards')
 
     def __str__(self):
         return f'Flashcard: {self.front[:50]}...'
@@ -65,14 +81,15 @@ class StudyPlan(models.Model):
     """
 
     class Status(models.TextChoices):
-        ACTIVE = 'active', 'Active'
-        COMPLETED = 'completed', 'Completed'
-        ARCHIVED = 'archived', 'Archived'
+        ACTIVE = 'active', _('Active')
+        COMPLETED = 'completed', _('Completed')
+        ARCHIVED = 'archived', _('Archived')
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='study_plans',
+        verbose_name=_('User'),
     )
     topic = models.ForeignKey(
         Topic,
@@ -80,16 +97,25 @@ class StudyPlan(models.Model):
         null=True,
         blank=True,
         related_name='study_plans',
+        verbose_name=_('Topic'),
     )
     media_item = models.ForeignKey(
         MediaItem,
         on_delete=models.CASCADE,
         related_name='study_plans',
+        verbose_name=_('Media Item'),
     )
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.ACTIVE
+        _('Status'),
+        max_length=20,
+        choices=Status.choices,
+        default=Status.ACTIVE,
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Study Plan')
+        verbose_name_plural = _('Study Plans')
 
     def __str__(self):
         return f'Plan for {self.user.username} ({self.created_at.date()})'
@@ -101,16 +127,24 @@ class StudyUnit(models.Model):
     """
 
     plan = models.ForeignKey(
-        StudyPlan, on_delete=models.CASCADE, related_name='units'
+        StudyPlan,
+        on_delete=models.CASCADE,
+        related_name='units',
+        verbose_name=_('Study Plan'),
     )
     concept = models.ForeignKey(
-        Concept, on_delete=models.CASCADE, related_name='study_units'
+        Concept,
+        on_delete=models.CASCADE,
+        related_name='study_units',
+        verbose_name=_('Concept'),
     )
-    order = models.PositiveIntegerField(default=0)
-    is_completed = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(_('Order'), default=0)
+    is_completed = models.BooleanField(_('Is Completed'), default=False)
 
     class Meta:
         ordering = ['order']
+        verbose_name = _('Study Unit')
+        verbose_name_plural = _('Study Units')
 
     def __str__(self):
         return f'{self.order}. {self.concept.title}'
@@ -122,21 +156,32 @@ class QuizQuestion(models.Model):
     """
 
     class QuestionType(models.TextChoices):
-        MULTIPLE_CHOICE = 'multiple_choice', 'Multiple Choice'
-        OPEN = 'open', 'Open Answer'
+        MULTIPLE_CHOICE = 'multiple_choice', _('Multiple Choice')
+        OPEN = 'open', _('Open Answer')
 
     concept = models.ForeignKey(
-        Concept, on_delete=models.CASCADE, related_name='quiz_questions'
+        Concept,
+        on_delete=models.CASCADE,
+        related_name='quiz_questions',
+        verbose_name=_('Concept'),
     )
     question_data = models.JSONField(
-        help_text='JSON structure with question, options, correct_answer, explanation'
+        _('Question Data'),
+        help_text=_(
+            'JSON structure with question, options, correct_answer, explanation'
+        ),
     )
     question_type = models.CharField(
+        _('Question Type'),
         max_length=20,
         choices=QuestionType.choices,
         default=QuestionType.MULTIPLE_CHOICE,
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Quiz Question')
+        verbose_name_plural = _('Quiz Questions')
 
     def __str__(self):
         return f'Quiz for {self.concept.title}'
