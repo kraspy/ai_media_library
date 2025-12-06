@@ -1,6 +1,8 @@
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate
+from langchain.agents import create_agent
+from langchain_core.messages import HumanMessage
 from langchain_core.tools import tool
+
+from apps.learning.history import DjangoChatMessageHistory
 
 from .base import get_llm
 
@@ -41,36 +43,40 @@ def get_study_plan(user_id: int) -> str:
 class TutorAgent:
     """
     Interactive Tutor Agent that can use tools to help the user.
+    Uses langchain.agents.create_agent (v1.0) and DjangoChatMessageHistory.
     """
 
     def __init__(self):
         self.llm = get_llm(temperature=0.7)
         self.tools = [search_knowledge_base, get_study_plan]
 
-        # Use local import to avoid circular dependency if possible, or just standard import
         from apps.core.models import ProjectSettings
 
         settings = ProjectSettings.load()
-        system_prompt = settings.tutor_prompt
+        self.system_prompt = settings.tutor_prompt
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    'system',
-                    system_prompt,
-                ),
-                ('placeholder', '{chat_history}'),
-                ('user', '{input}'),
-                ('placeholder', '{agent_scratchpad}'),
-            ]
+        self.graph = create_agent(
+            model=self.llm,
+            tools=self.tools,
+            system_prompt=self.system_prompt,
         )
 
-        self.agent = create_tool_calling_agent(self.llm, self.tools, prompt)
-        self.agent_executor = AgentExecutor(
-            agent=self.agent, tools=self.tools, verbose=True
-        )
+    def run(self, user_input: str, session_id: str) -> str:
+        history = DjangoChatMessageHistory(session_id=session_id)
 
-    def run(self, user_input: str, chat_history: list = []) -> str:
-        return self.agent_executor.invoke(
-            {'input': user_input, 'chat_history': chat_history}
-        )['output']
+        user_msg = HumanMessage(content=user_input)
+        history.add_message(user_msg)
+
+        messages = history.messages
+
+        result = self.graph.invoke({'messages': messages})
+
+        final_messages = result.get('messages', [])
+        if not final_messages:
+            return 'Error: No response from agent.'
+
+        last_message = final_messages[-1]
+
+        history.add_message(last_message)
+
+        return last_message.content

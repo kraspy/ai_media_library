@@ -185,3 +185,56 @@ class QuizQuestion(models.Model):
 
     def __str__(self):
         return f'Quiz for {self.concept.title}'
+
+
+class TutorChatSession(models.Model):
+    """
+    A chat session with the AI Tutor.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='tutor_sessions',
+        verbose_name=_('User'),
+    )
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
+
+    class Meta:
+        verbose_name = _('Tutor Chat Session')
+        verbose_name_plural = _('Tutor Chat Sessions')
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f'Session {self.id} for {self.user.username}'
+
+
+class TutorChatMessage(models.Model):
+    """
+    A message in a TutorChatSession.
+    """
+
+    class Role(models.TextChoices):
+        USER = 'user', _('User')
+        ASSISTANT = 'assistant', _('Assistant')
+
+    session = models.ForeignKey(
+        TutorChatSession,
+        on_delete=models.CASCADE,
+        related_name='messages',
+        verbose_name=_('Session'),
+    )
+    role = models.CharField(
+        _('Role'), max_length=10, choices=Role.choices, default=Role.USER
+    )
+    content = models.TextField(_('Content'))
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Chat Message')
+        verbose_name_plural = _('Chat Messages')
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'{self.role}: {self.content[:50]}...'

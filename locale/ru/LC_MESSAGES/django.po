@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-05 14:36+0000\n"
+"POT-Creation-Date: 2025-12-06 08:26+0000\n"
 "PO-Revision-Date: 2025-12-05 21:50+0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,8 +43,42 @@ msgstr "Системный промпт для суммаризации."
 msgid "Summarization Prompt"
 msgstr "Промпт для суммаризации"
 
-#: apps/core/models.py:52 apps/core/models.py:55 apps/core/models.py:56
-#: templates/base.html:19
+#: apps/core/models.py:36
+#, fuzzy
+#| msgid "System prompt for Summarization."
+msgid "System prompt for Concept Extraction Agent."
+msgstr "Системный промпт для суммаризации."
+
+#: apps/core/models.py:37 templates/core/settings.html:30
+msgid "Concept Extraction Prompt"
+msgstr "Промпт для извлечения концепций"
+
+#: apps/core/models.py:41
+msgid "System prompt for Study Plan Generation Agent."
+msgstr "Системный промпт для агента генерации учебного плана."
+
+#: apps/core/models.py:42 templates/core/settings.html:34
+msgid "Plan Generation Prompt"
+msgstr "Промпт для генерации плана"
+
+#: apps/core/models.py:46
+msgid "System prompt for Quiz Generation Agent."
+msgstr "Системный промпт для агента генерации квизов."
+
+#: apps/core/models.py:47 templates/core/settings.html:38
+msgid "Quiz Generation Prompt"
+msgstr "Промпт для генерации квиза"
+
+#: apps/core/models.py:51
+msgid "System prompt for Tutor Agent."
+msgstr "Системный промпт для агента-учителя."
+
+#: apps/core/models.py:52 templates/core/settings.html:42
+msgid "Tutor Prompt"
+msgstr "Промпт учителя"
+
+#: apps/core/models.py:72 apps/core/models.py:75 apps/core/models.py:76
+#: templates/base.html:20
 msgid "Settings"
 msgstr "Настройки"
 
@@ -73,6 +107,7 @@ msgstr "Уровень сложности (1-5)"
 
 #: apps/learning/models.py:25 apps/learning/models.py:68
 #: apps/learning/models.py:114 apps/learning/models.py:180
+#: apps/learning/models.py:201 apps/learning/models.py:232
 #: apps/library/models.py:24 apps/library/models.py:78
 msgid "Created At"
 msgstr "Создано"
@@ -87,6 +122,7 @@ msgid "Concepts"
 msgstr "Концепции"
 
 #: apps/learning/models.py:44 apps/learning/models.py:92
+#: apps/learning/models.py:199 apps/learning/models.py:219
 #: apps/library/models.py:12 apps/library/models.py:55
 msgid "User"
 msgstr "Пользователь"
@@ -224,6 +260,48 @@ msgstr "Вопрос"
 msgid "Quiz Questions"
 msgstr "Вопросы"
 
+#: apps/learning/models.py:202
+#, fuzzy
+#| msgid "Created At"
+msgid "Updated At"
+msgstr "Создано"
+
+#: apps/learning/models.py:205
+#, fuzzy
+#| msgid "Exit Session"
+msgid "Tutor Chat Session"
+msgstr "Выйти из сессии"
+
+#: apps/learning/models.py:206
+msgid "Tutor Chat Sessions"
+msgstr "Чаты с Учителем"
+
+#: apps/learning/models.py:220
+msgid "Assistant"
+msgstr "Ассистент"
+
+#: apps/learning/models.py:226
+#, fuzzy
+#| msgid "Exit Session"
+msgid "Session"
+msgstr "Выйти из сессии"
+
+#: apps/learning/models.py:229
+msgid "Role"
+msgstr "Роль"
+
+#: apps/learning/models.py:231
+msgid "Content"
+msgstr "Содержимое"
+
+#: apps/learning/models.py:235
+msgid "Chat Message"
+msgstr "Сообщение чата"
+
+#: apps/learning/models.py:236
+msgid "Chat Messages"
+msgstr "Сообщения чата"
+
 #: apps/library/models.py:20
 msgid "Parent Topic"
 msgstr "Родительская тема"
@@ -310,32 +388,36 @@ msgstr "Русский"
 msgid "AI Media Library"
 msgstr "AI Медиатека"
 
-#: templates/base.html:18
+#: templates/base.html:19
 msgid "Home"
 msgstr "Главная"
 
-#: templates/base.html:20
+#: templates/base.html:21
 msgid "Admin"
 msgstr "Админка"
 
-#: templates/base.html:21
+#: templates/base.html:22
 msgid "Learning"
 msgstr "Обучение"
 
-#: templates/base.html:40
+#: templates/base.html:23 templates/learning/tutor.html:13
+msgid "AI Tutor"
+msgstr "AI Учитель"
+
+#: templates/base.html:42
 msgid "Welcome"
 msgstr "Добро пожаловать"
 
-#: templates/base.html:41
+#: templates/base.html:43
 msgid "Logout"
 msgstr "Выйти"
 
-#: templates/base.html:43 templates/users/login.html:7
+#: templates/base.html:45 templates/users/login.html:7
 #: templates/users/login.html:18
 msgid "Login"
 msgstr "Войти"
 
-#: templates/base.html:52
+#: templates/base.html:54
 msgid "AI Media Library. All rights reserved."
 msgstr "AI Медиатека. Все права защищены."
 
@@ -351,7 +433,7 @@ msgstr "AI Движки"
 msgid "Prompts"
 msgstr "Промпты"
 
-#: templates/core/settings.html:31
+#: templates/core/settings.html:47
 msgid "Save Settings"
 msgstr "Сохранить настройки"
 
@@ -375,10 +457,18 @@ msgid ""
 msgid_plural ""
 "You have <strong class=\"text-warning\">%(count)s</strong> cards due for "
 "review today."
-msgstr[0] "У вас <strong class=\"text-warning\">%(count)s</strong> карточка для повторения сегодня."
-msgstr[1] "У вас <strong class=\"text-warning\">%(count)s</strong> карточки для повторения сегодня."
-msgstr[2] "У вас <strong class=\"text-warning\">%(count)s</strong> карточек для повторения сегодня."
-msgstr[3] "У вас <strong class=\"text-warning\">%(count)s</strong> карточек для повторения сегодня."
+msgstr[0] ""
+"У вас <strong class=\"text-warning\">%(count)s</strong> карточка для "
+"повторения сегодня."
+msgstr[1] ""
+"У вас <strong class=\"text-warning\">%(count)s</strong> карточки для "
+"повторения сегодня."
+msgstr[2] ""
+"У вас <strong class=\"text-warning\">%(count)s</strong> карточек для "
+"повторения сегодня."
+msgstr[3] ""
+"У вас <strong class=\"text-warning\">%(count)s</strong> карточек для "
+"повторения сегодня."
 
 #: templates/learning/dashboard.html:28
 msgid "Start Review"
@@ -549,6 +639,30 @@ msgstr "Легко"
 msgid "Exit Session"
 msgstr "Выйти из сессии"
 
+#: templates/learning/tutor.html:15
+msgid "Refresh Chat"
+msgstr "Обновить чат"
+
+#: templates/learning/tutor.html:29 templates/learning/tutor.html:137
+msgid "You"
+msgstr "Вы"
+
+#: templates/learning/tutor.html:29 templates/learning/tutor.html:137
+msgid "Tutor"
+msgstr "Репетитор"
+
+#: templates/learning/tutor.html:37
+msgid "Start a conversation with your AI Tutor!"
+msgstr "Начните разговор с вашим AI репетитором!"
+
+#: templates/learning/tutor.html:47
+msgid "Tutor is thinking..."
+msgstr "Репетитор думает..."
+
+#: templates/learning/tutor.html:56
+msgid "Ask a question..."
+msgstr "Задайте вопрос..."
+
 #: templates/library/delete.html:7
 msgid "Delete Media Item?"
 msgstr "Удалить медиафайл?"
@@ -603,7 +717,7 @@ msgstr "Медиатека"
 msgid "Upload New Media"
 msgstr "Загрузить новый медиафайл"
 
-#: templates/library/list.html:16 templates/library/list.html:106
+#: templates/library/list.html:16 templates/library/list.html:107
 msgid "Selected"
 msgstr "Выбрано"
 
@@ -631,12 +745,14 @@ msgstr "Выберите элементы для действий"
 msgid "Actions"
 msgstr "Действия"
 
-#: templates/library/list.html:87
+#: templates/library/list.html:88
 #, python-format
 msgid ""
 "No media items found. <a href=\"%(upload_url)s\" class=\"text-"
 "primary\">Upload one</a> to get started."
-msgstr "Медиафайлы не найдены. <a href=\"%(upload_url)s\" class=\"text-primary\">Загрузите первый</a>, чтобы начать."
+msgstr ""
+"Медиафайлы не найдены. <a href=\"%(upload_url)s\" class=\"text-"
+"primary\">Загрузите первый</a>, чтобы начать."
 
 #: templates/library/update.html:7
 msgid "Edit Media Item"

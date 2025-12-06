@@ -160,3 +160,54 @@ class QuizView(LoginRequiredMixin, DetailView):
                 'is_submitted': True,
             },
         )
+
+
+class TutorChatView(LoginRequiredMixin, TemplateView):
+    template_name = 'learning/tutor.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get or create active session
+        from apps.learning.models import TutorChatMessage, TutorChatSession
+
+        session = TutorChatSession.objects.filter(
+            user=self.request.user
+        ).first()
+        if not session:
+            session = TutorChatSession.objects.create(user=self.request.user)
+
+        context['session_id'] = session.id
+        context['messages'] = session.messages.all()
+        return context
+
+
+class TutorAPIView(LoginRequiredMixin, View):
+    def post(self, request):
+        import json
+
+        from django.http import JsonResponse
+
+        from apps.learning.agents.tutor import TutorAgent
+        from apps.learning.models import TutorChatSession
+
+        try:
+            data = json.loads(request.body)
+            user_message = data.get('message')
+            session_id = data.get('session_id')
+
+            if not user_message or not session_id:
+                return JsonResponse({'error': 'Missing data'}, status=400)
+
+            # verify session ownership
+            session = get_object_or_404(
+                TutorChatSession, id=session_id, user=request.user
+            )
+
+            # Run Agent
+            agent = TutorAgent()
+            response = agent.run(user_message, session_id=str(session.id))
+
+            return JsonResponse({'response': response, 'status': 'success'})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)

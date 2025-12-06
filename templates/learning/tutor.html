@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-fluid py-4" style="height: calc(100vh - 70px);">
+    <div class="row h-100 justify-content-center">
+        <div class="col-md-8 col-lg-6 h-100 d-flex flex-column">
+            
+            <!-- Header -->
+            <div class="card card-custom bg-dark text-light mb-3 flex-shrink-0">
+                <div class="card-body d-flex justify-content-between align-items-center py-2 px-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-robot me-2 text-info"></i>{% trans "AI Tutor" %}
+                    </h5>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()" title="{% trans 'Refresh Chat' %}">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Window -->
+            <div class="card card-custom bg-dark text-light flex-grow-1 mb-3 position-relative" style="overflow: hidden;">
+                <div class="card-body p-0 d-flex flex-column h-100">
+                    <div id="chat-messages" class="flex-grow-1 p-3" style="overflow-y: auto;">
+                        {% for msg in messages %}
+                            <div class="d-flex mb-3 {% if msg.role == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
+                                <div class="p-3 rounded-3 {% if msg.role == 'user' %}bg-primary text-white{% else %}bg-secondary text-light{% endif %}" style="max-width: 80%;">
+                                    <div class="mb-1 small opacity-75">
+                                        {% if msg.role == 'user' %}{% trans "You" %}{% else %}{% trans "Tutor" %}{% endif %}
+                                    </div>
+                                    <div class="message-content" style="white-space: pre-wrap;">{{ msg.content }}</div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="text-center text-muted mt-5" id="empty-state">
+                                <i class="bi bi-chat-dots display-4 mb-3"></i>
+                                <p>{% trans "Start a conversation with your AI Tutor!" %}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                 <!-- Loading Indicator -->
+                <div id="loading" class="position-absolute bottom-0 start-50 translate-middle-x mb-3 d-none">
+                     <span class="badge bg-dark border border-secondary p-2 shadow">
+                        <span class="spinner-grow spinner-grow-sm text-info me-1" role="status" aria-hidden="true"></span>
+                        {% trans "Tutor is thinking..." %}
+                     </span>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="card card-custom bg-dark text-light flex-shrink-0">
+                <div class="card-body p-2">
+                    <form id="chat-form" class="d-flex gap-2">
+                        <textarea id="message-input" class="form-control bg-dark-subtle text-light border-secondary" rows="1" placeholder="{% trans 'Ask a question...' %}" style="resize: none; text-align: left; overflow: hidden;" required></textarea>
+                        <button type="submit" class="btn btn-info align-self-end">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatMessages = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const loading = document.getElementById('loading');
+        const emptyState = document.getElementById('empty-state');
+        const sessionId = "{{ session_id }}";
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if (this.value === '') this.style.height = 'auto';
+        });
+
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                chatForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        chatForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            addMessage('user', message);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            if (emptyState) emptyState.classList.add('d-none');
+            loading.classList.remove('d-none');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch("{% url 'learning:tutor_api' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                });
+
+                const data = await response.json();
+                loading.classList.add('d-none');
+
+                if (response.ok && data.status === 'success') {
+                    addMessage('assistant', data.response);
+                } else {
+                    addMessage('error', data.error || 'An error occurred');
+                }
+            } catch (error) {
+                loading.classList.add('d-none');
+                addMessage('error', 'Network error. Please try again.');
+                console.error('Error:', error);
+            }
+        });
+
+        function addMessage(role, content) {
+            const div = document.createElement('div');
+            div.className = `d-flex mb-3 ${role === 'user' ? 'justify-content-end' : 'justify-content-start'}`;
+            
+            const bubbleClass = role === 'user' ? 'bg-primary text-white' : (role === 'error' ? 'bg-danger text-white' : 'bg-secondary text-light');
+            const name = role === 'user' ? '{% trans "You" %}' : '{% trans "Tutor" %}';
+            
+            div.innerHTML = `
+                <div class="p-3 rounded-3 ${bubbleClass}" style="max-width: 80%;">
+                    <div class="mb-1 small opacity-75">${name}</div>
+                    <div class="message-content" style="white-space: pre-wrap;">${content}</div>
+                </div>
+            `;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    });
+</script>
+{% endblock %}
