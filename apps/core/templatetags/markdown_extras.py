@@ -9,3 +9,9 @@ register = template.Library()
 @stringfilter
 def markdown(value):
     return md.markdown(value, extensions=['markdown.extensions.fenced_code'])
+
+
+@register.filter(name='strip')
+@stringfilter
+def strip_whitespace(value):
+    return value.strip()

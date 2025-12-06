@@ -168,7 +168,7 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Get or create active session
-        from apps.learning.models import TutorChatMessage, TutorChatSession
+        from apps.learning.models import TutorChatSession
 
         session = TutorChatSession.objects.filter(
             user=self.request.user
@@ -178,6 +178,20 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
 
         context['session_id'] = session.id
         context['messages'] = session.messages.all()
+
+        # Context Selection Data
+        from apps.learning.models import Concept, StudyPlan
+
+        context['active_plans'] = StudyPlan.objects.filter(
+            user=self.request.user, status=StudyPlan.Status.ACTIVE
+        ).order_by('-created_at')[:5]
+
+        context['recent_concepts'] = (
+            Concept.objects.filter(study_units__plan__user=self.request.user)
+            .distinct()
+            .order_by('-created_at')[:20]
+        )
+
         return context
 
 
@@ -203,9 +217,38 @@ class TutorAPIView(LoginRequiredMixin, View):
                 TutorChatSession, id=session_id, user=request.user
             )
 
+            # Handle Context Injection
+            context_type = data.get('context_type')
+            context_id = data.get('context_id')
+            context_text = ''
+
+            if context_type and context_id:
+                from apps.learning.models import Concept, StudyPlan
+
+                try:
+                    if context_type == 'plan':
+                        plan = StudyPlan.objects.get(
+                            id=context_id, user=request.user
+                        )
+                        context_text = f"\n\n[Context: User is referring to Study Plan '{plan.topic.title}'. Plan ID: {plan.id}]"
+                    elif context_type == 'concept':
+                        # Concepts might not be directly owned by user, but linked via study units
+                        # Check access loosely or just get by ID for simplicity if valid
+                        concept = Concept.objects.get(id=context_id)
+                        context_text = f"\n\n[Context: User is referring to Concept '{concept.title}'. Description: {concept.description}]"
+                except Exception:
+                    pass  # Ignore invalid context IDs
+
             # Run Agent
             agent = TutorAgent()
-            response = agent.run(user_message, session_id=str(session.id))
+            # Append context to the message invisible to the user?
+            # Actually, the agent.run method adds it to history.
+            # We might want to persist the context in the history for future reference,
+            # OR just make it part of this turn.
+
+            full_input = user_message + context_text
+
+            response = agent.run(full_input, session_id=str(session.id))
 
             return JsonResponse({'response': response, 'status': 'success'})
 
