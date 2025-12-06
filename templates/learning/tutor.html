@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% load markdown_extras %}
+
 {% block content %}
 <div class="container-fluid py-4" style="height: calc(100vh - 70px);">
     <div class="row h-100 justify-content-center">
@@ -28,7 +30,13 @@
                                     <div class="mb-1 small opacity-75">
                                         {% if msg.role == 'user' %}{% trans "You" %}{% else %}{% trans "Tutor" %}{% endif %}
                                     </div>
-                                    <div class="message-content" style="white-space: pre-wrap;">{{ msg.content }}</div>
+                                    <div class="message-content markdown-body" style="{% if msg.role == 'user' %}white-space: pre-wrap;{% endif %}">
+                                        {% if msg.role == 'assistant' %}
+                                            {{ msg.content|markdown|safe }}
+                                        {% else %}
+                                            {{ msg.content }}
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         {% empty %}
@@ -65,6 +73,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const chatMessages = document.getElementById('chat-messages');
@@ -75,6 +84,9 @@
         const sessionId = "{{ session_id }}";
 
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Highlight syntax for existing server-rendered messages
+        Prism.highlightAll();
 
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
@@ -94,6 +106,7 @@
             const message = messageInput.value.trim();
             if (!message) return;
 
+            // User message is plain text usually, but markdown is fine
             addMessage('user', message);
             messageInput.value = '';
             messageInput.style.height = 'auto';
@@ -136,15 +149,46 @@
             const bubbleClass = role === 'user' ? 'bg-primary text-white' : (role === 'error' ? 'bg-danger text-white' : 'bg-secondary text-light');
             const name = role === 'user' ? '{% trans "You" %}' : '{% trans "Tutor" %}';
             
+            // Parse Markdown for Assistant output
+            let renderedContent = content;
+            if (role === 'assistant') {
+                renderedContent = marked.parse(content);
+            } else {
+                // Escape HTML for user input to prevent XSS if we were persisting it without cleaning (but here it's just DOM display)
+                // For user, let's keep it simple or also support markdown?
+                // Text is safer for user input usually unless we sanitize.
+                // Let's plain text user input for now or minimal formatting.
+                // Actually, let's use textContent equivalent for user to be safe, or just render as is if trusted.
+                // But wait, the previous code used ${content} in innerHTML which is XSS risky if not careful.
+                // Given we are displaying what user just typed, it's reflected XSS if we aren't careful.
+                // Let's use marked for user too, it handles some stuff, but better to be safe.
+                // For now, let's follow the requirement: "Tutor answers... in markdown".
+                // I will escape user content to be safe.
+                renderedContent = escapeHtml(content).replace(/\n/g, '<br>');
+            }
+
             div.innerHTML = `
                 <div class="p-3 rounded-3 ${bubbleClass}" style="max-width: 80%;">
                     <div class="mb-1 small opacity-75">${name}</div>
-                    <div class="message-content" style="white-space: pre-wrap;">${content}</div>
+                    <div class="message-content markdown-body" style="${role === 'assistant' ? '' : 'white-space: pre-wrap;'}">${renderedContent}</div>
                 </div>
             `;
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            if (role === 'assistant') {
+                Prism.highlightAllUnder(div);
+            }
         }
+        
+        function escapeHtml(text) {
+             return text
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+         }
     });
 </script>
 {% endblock %}
