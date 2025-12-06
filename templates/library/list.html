@@ -84,6 +84,7 @@
                     <tr>
                         <td colspan="6" class="text-center py-5 text-secondary">
                             <i class="bi bi-folder2-open display-4 d-block mb-3"></i>
+                            {% url 'library:upload' as upload_url %}
                             {% blocktrans %}No media items found. <a href="{{ upload_url }}" class="text-primary">Upload one</a> to get started.{% endblocktrans %}
                         </td>
                     </tr>
