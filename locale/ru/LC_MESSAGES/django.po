@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-06 08:26+0000\n"
+"POT-Creation-Date: 2025-12-06 08:43+0000\n"
 "PO-Revision-Date: 2025-12-05 21:50+0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,41 +43,41 @@ msgstr "Системный промпт для суммаризации."
 msgid "Summarization Prompt"
 msgstr "Промпт для суммаризации"
 
-#: apps/core/models.py:36
+#: apps/core/models.py:44
 #, fuzzy
 #| msgid "System prompt for Summarization."
 msgid "System prompt for Concept Extraction Agent."
 msgstr "Системный промпт для суммаризации."
 
-#: apps/core/models.py:37 templates/core/settings.html:30
+#: apps/core/models.py:45 templates/core/settings.html:30
 msgid "Concept Extraction Prompt"
 msgstr "Промпт для извлечения концепций"
 
-#: apps/core/models.py:41
+#: apps/core/models.py:57
 msgid "System prompt for Study Plan Generation Agent."
 msgstr "Системный промпт для агента генерации учебного плана."
 
-#: apps/core/models.py:42 templates/core/settings.html:34
+#: apps/core/models.py:58 templates/core/settings.html:34
 msgid "Plan Generation Prompt"
 msgstr "Промпт для генерации плана"
 
-#: apps/core/models.py:46
+#: apps/core/models.py:70
 msgid "System prompt for Quiz Generation Agent."
 msgstr "Системный промпт для агента генерации квизов."
 
-#: apps/core/models.py:47 templates/core/settings.html:38
+#: apps/core/models.py:71 templates/core/settings.html:38
 msgid "Quiz Generation Prompt"
 msgstr "Промпт для генерации квиза"
 
-#: apps/core/models.py:51
+#: apps/core/models.py:84
 msgid "System prompt for Tutor Agent."
 msgstr "Системный промпт для агента-учителя."
 
-#: apps/core/models.py:52 templates/core/settings.html:42
+#: apps/core/models.py:85 templates/core/settings.html:42
 msgid "Tutor Prompt"
 msgstr "Промпт учителя"
 
-#: apps/core/models.py:72 apps/core/models.py:75 apps/core/models.py:76
+#: apps/core/models.py:105 apps/core/models.py:108 apps/core/models.py:109
 #: templates/base.html:20
 msgid "Settings"
 msgstr "Настройки"
@@ -338,7 +338,7 @@ msgstr "Ожидает"
 msgid "Processing"
 msgstr "Обработка"
 
-#: apps/library/models.py:49 templates/learning/quiz.html:21
+#: apps/library/models.py:49 templates/learning/quiz.html:22
 #: templates/library/list.html:66
 msgid "Failed"
 msgstr "Ошибка"
@@ -536,44 +536,49 @@ msgstr "Прогресс"
 msgid "%(completed)s of %(total)s units completed"
 msgstr "Завершено %(completed)s из %(total)s блоков"
 
-#: templates/learning/quiz.html:4 templates/learning/quiz.html:12
+#: templates/learning/quiz.html:5 templates/learning/quiz.html:13
 msgid "Quiz"
 msgstr "Квиз"
 
-#: templates/learning/quiz.html:19
+#: templates/learning/quiz.html:20
 msgid "Passed!"
 msgstr "Сдано!"
 
-#: templates/learning/quiz.html:24
+#: templates/learning/quiz.html:25
 #, python-format
 msgid "You scored %(score)s out of %(total)s (%(percent)s%%)"
 msgstr "Вы набрали %(score)s из %(total)s (%(percent)s%%)"
 
-#: templates/learning/quiz.html:32
+#: templates/learning/quiz.html:33
 msgid "Your Answer"
 msgstr "Ваш ответ"
 
-#: templates/learning/quiz.html:42
+#: templates/learning/quiz.html:43
 msgid "Correct Answer"
 msgstr "Правильный ответ"
 
-#: templates/learning/quiz.html:48
+#: templates/learning/quiz.html:49
 msgid "Explanation"
 msgstr "Пояснение"
 
-#: templates/learning/quiz.html:55
+#: templates/learning/quiz.html:56
 msgid "Retry Quiz"
 msgstr "Повторить квиз"
 
-#: templates/learning/quiz.html:57
+#: templates/learning/quiz.html:58
 msgid "Continue Learning"
 msgstr "Продолжить обучение"
 
-#: templates/learning/quiz.html:59
+#: templates/learning/quiz.html:60
 msgid "Back to Plan"
 msgstr "Назад к плану"
 
-#: templates/learning/quiz.html:81
+#: templates/learning/quiz.html:66
+#: templates/learning/quiz.html:65
+msgid "Study Material"
+msgstr "Учебный материал"
+
+#: templates/learning/quiz.html:90
 msgid "Submit Answers"
 msgstr "Отправить ответы"
 

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load markdown_extras %}
 
 {% block title %}{% trans "Quiz" %}: {{ unit.concept.title }}{% endblock %}
 
@@ -61,6 +62,14 @@
                         </div>
 
                     {% else %}
+                        <div class="mb-5">
+                            <h5 class="text-info mb-3">{% trans "Study Material" %}</h5>
+                            <div class="p-3 bg-secondary-subtle text-light rounded border border-secondary">
+                                {{ unit.concept.description|markdown|safe }}
+                            </div>
+                        </div>
+                        <hr class="border-secondary my-4">
+
                         <form method="post">
                             {% csrf_token %}
                             {% for question in questions %}

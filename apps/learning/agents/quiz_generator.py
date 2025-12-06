@@ -1,3 +1,4 @@
+from django.utils import translation
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -24,6 +25,10 @@ class QuizGenerationAgent:
     ) -> QuizSchema:
         settings = ProjectSettings.load()
         system_prompt = settings.quiz_generation_prompt
+
+        # Inject Language Instruction
+        current_language = translation.get_language()
+        system_prompt += f"\n\nIMPORTANT: Provide all Output (Questions, Options, Explanations) in language code: '{current_language}'."
 
         prompt = ChatPromptTemplate.from_messages(
             [

@@ -1,3 +1,4 @@
+from django.utils import translation
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -19,6 +20,10 @@ class ConceptExtractionAgent:
     def run(self, text: str) -> ConceptListSchema:
         settings = ProjectSettings.load()
         system_prompt = settings.concept_extraction_prompt
+
+        # Inject Language Instruction
+        current_language = translation.get_language()
+        system_prompt += f"\n\nIMPORTANT: Provide all Output (Titles, Descriptions) in language code: '{current_language}'."
 
         prompt = ChatPromptTemplate.from_messages(
             [

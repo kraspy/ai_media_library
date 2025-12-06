@@ -1,3 +1,4 @@
+from django.utils import translation
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
 from langchain_core.tools import tool
@@ -54,6 +55,10 @@ class TutorAgent:
 
         settings = ProjectSettings.load()
         self.system_prompt = settings.tutor_prompt
+
+        # Inject Language Instruction
+        current_language = translation.get_language()
+        self.system_prompt += f"\n\nIMPORTANT: Chat with the user in language code: '{current_language}'."
 
         self.graph = create_agent(
             model=self.llm,
