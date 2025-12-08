@@ -33,14 +33,43 @@ class MediaUploadView(CreateView):
     success_url = reverse_lazy('library:list')
 
     def form_valid(self, form):
-        files = self.request.FILES.getlist('file')
-        topic = form.cleaned_data.get('topic')
-        tags = form.cleaned_data.get('tags')
+        supported_extensions = [
+            'mp4',
+            'mov',
+            'avi',
+            'mkv',
+            'mp3',
+            'wav',
+            'flac',
+            'm4a',
+            'ogg',
+            'jpg',
+            'jpeg',
+            'png',
+            'webp',
+            'txt',
+            'md',
+        ]
+
+        from django.contrib import messages
+        from django.utils.translation import gettext as _
+
+        for f in files:
+            ext = f.name.lower().split('.')[-1]
+            if ext not in supported_extensions:
+                messages.error(
+                    self.request,
+                    _(
+                        'File "%(filename)s" has an unsupported extension: .%(ext)s'
+                    )
+                    % {'filename': f.name, 'ext': ext},
+                )
+                return HttpResponseRedirect(self.success_url)
 
         for f in files:
             title = f.name
-
             ext = f.name.lower().split('.')[-1]
+
             if ext in ['mp4', 'mov', 'avi', 'mkv']:
                 media_type = MediaItem.MediaType.VIDEO
             elif ext in ['mp3', 'wav', 'flac', 'm4a', 'ogg']:
@@ -50,7 +79,7 @@ class MediaUploadView(CreateView):
             elif ext in ['txt', 'md']:
                 media_type = MediaItem.MediaType.TEXT
             else:
-                media_type = MediaItem.MediaType.TEXT
+                continue
 
             instance = MediaItem.objects.create(
                 user=self.request.user,
@@ -68,6 +97,7 @@ class MediaUploadView(CreateView):
 
             analyze_media.delay(instance.id)
 
+        messages.success(self.request, _('Files uploaded successfully.'))
         return HttpResponseRedirect(self.success_url)
 
 
