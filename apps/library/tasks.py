@@ -144,18 +144,20 @@ def summarize_media(media_item_id):
 
         provider = project_settings.llm_provider
 
-        api_key = settings.OPENAI_API_KEY
-        base_url = None
-        model_name = settings.OPENAI_MODEL
-
         if provider == ProjectSettings.LLMProvider.DEEPSEEK:
-            api_key = settings.DEEPSEEK_API_KEY
-            base_url = 'https://api.deepseek.com'
-            model_name = settings.DEEPSEEK_MODEL
+            from langchain_deepseek import ChatDeepSeek
 
-        llm = ChatOpenAI(
-            api_key=api_key, model=model_name, temperature=0, base_url=base_url
-        )
+            llm = ChatDeepSeek(
+                api_key=settings.DEEPSEEK_API_KEY,
+                model=settings.DEEPSEEK_MODEL,
+                temperature=0,
+            )
+        else:
+            llm = ChatOpenAI(
+                api_key=settings.OPENAI_API_KEY,
+                model=settings.OPENAI_MODEL,
+                temperature=0,
+            )
 
         prompt = ChatPromptTemplate.from_messages(
             [
