@@ -33,6 +33,10 @@ class MediaUploadView(CreateView):
     success_url = reverse_lazy('library:list')
 
     def form_valid(self, form):
+        files = self.request.FILES.getlist('file')
+        topic = form.cleaned_data.get('topic')
+        tags = form.cleaned_data.get('tags')
+
         supported_extensions = [
             'mp4',
             'mov',
@@ -95,7 +99,22 @@ class MediaUploadView(CreateView):
                 analyze_media,
             )
 
-            analyze_media.delay(instance.id)
+            try:
+                analyze_media.delay(instance.id)
+            except Exception as e:
+                import logging
+
+                logger = logging.getLogger(__name__)
+                logger.error(
+                    f'Failed to schedule analysis for {instance.id}: {e}'
+                )
+                messages.warning(
+                    self.request,
+                    _(
+                        'File "%(filename)s" uploaded, but analysis could not be started due to an API error.'
+                    )
+                    % {'filename': f.name},
+                )
 
         messages.success(self.request, _('Files uploaded successfully.'))
         return HttpResponseRedirect(self.success_url)
@@ -129,13 +148,33 @@ class MediaBulkActionView(LoginRequiredMixin, View):
             queryset.delete()
 
         elif action == 'reanalyze':
+            from django.contrib import messages
+            from django.utils.translation import gettext as _
+
+            error_count = 0
             for item in queryset:
                 item.status = MediaItem.Status.PENDING
                 item.transcription = ''
                 item.summary = ''
                 item.error_log = ''
                 item.save()
-                analyze_media.delay(item.id)
+                try:
+                    analyze_media.delay(item.id)
+                except Exception:
+                    error_count += 1
+
+            if error_count > 0:
+                messages.warning(
+                    request,
+                    _(
+                        'Analysis re-started, but %(count)d items failed to schedule due to API error.'
+                    )
+                    % {'count': error_count},
+                )
+            else:
+                messages.success(
+                    request, _('Analysis re-started for selected items.')
+                )
 
         return redirect('library:list')
 
