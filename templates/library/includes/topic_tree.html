@@ -1,0 +1,30 @@
+{% load i18n %}
+{% for item in nodes %}
+    <li class="list-group-item bg-transparent text-light border-secondary">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                {% if item.children %}
+                    <i class="bi bi-folder2-open me-2 text-warning"></i>
+                {% else %}
+                    <i class="bi bi-tag me-2 text-info"></i>
+                {% endif %}
+                <span class="fw-semibold">{{ item.node.title }}</span>
+            </div>
+            <div class="btn-group btn-group-sm">
+                <a href="{% url 'library:topic_update' item.node.slug %}" class="btn btn-outline-secondary" title="{% trans 'Edit' %}">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'library:topic_delete' item.node.slug %}" class="btn btn-outline-danger" title="{% trans 'Delete' %}">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </div>
+        </div>
+    </li>
+    {% if item.children %}
+        <li class="list-group-item bg-transparent border-0 ps-4 py-0">
+            <ul class="list-group list-group-flush border-start border-secondary">
+                {% include "library/includes/topic_tree.html" with nodes=item.children %}
+            </ul>
+        </li>
+    {% endif %}
+{% endfor %}

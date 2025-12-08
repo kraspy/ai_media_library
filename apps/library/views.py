@@ -1,7 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -11,7 +13,7 @@ from django.views.generic import (
     View,
 )
 
-from .models import MediaItem
+from .models import MediaItem, Topic
 from .tasks import analyze_media
 
 
@@ -183,3 +185,95 @@ class MediaDeleteView(DeleteView):
     model = MediaItem
     template_name = 'library/delete.html'
     success_url = reverse_lazy('library:list')
+
+
+class TopicListView(LoginRequiredMixin, ListView):
+    model = Topic
+    template_name = 'library/topic_list.html'
+    context_object_name = 'topics'
+
+    def get_queryset(self):
+        return Topic.objects.filter(user=self.request.user).order_by('title')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        topics = list(self.get_queryset())
+        topic_dict = {t.id: {'node': t, 'children': []} for t in topics}
+        root_nodes = []
+
+        for t in topics:
+            if t.parent_id:
+                if t.parent_id in topic_dict:
+                    topic_dict[t.parent_id]['children'].append(
+                        topic_dict[t.id]
+                    )
+            else:
+                root_nodes.append(topic_dict[t.id])
+
+        def sort_tree(nodes):
+            nodes.sort(key=lambda x: x['node'].title.lower())
+            for node in nodes:
+                sort_tree(node['children'])
+
+        sort_tree(root_nodes)
+        context['topic_tree'] = root_nodes
+        return context
+
+
+class TopicCreateView(LoginRequiredMixin, CreateView):
+    model = Topic
+    fields = ['title', 'parent']
+    template_name = 'library/topic_form.html'
+    success_url = reverse_lazy('library:topic_list')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['parent'].queryset = Topic.objects.filter(
+            user=self.request.user
+        )
+        return form
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, _('Topic created successfully.'))
+        return super().form_valid(form)
+
+
+class TopicUpdateView(LoginRequiredMixin, UpdateView):
+    model = Topic
+    fields = ['title', 'parent']
+    template_name = 'library/topic_form.html'
+    success_url = reverse_lazy('library:topic_list')
+    slug_url_kwarg = 'slug'
+
+    def get_queryset(self):
+        return Topic.objects.filter(user=self.request.user)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        qs = Topic.objects.filter(user=self.request.user).exclude(
+            id=self.object.id
+        )
+        qs = Topic.objects.filter(user=self.request.user).exclude(
+            id=self.object.id
+        )
+        form.fields['parent'].queryset = qs
+        return form
+
+    def form_valid(self, form):
+        messages.success(self.request, _('Topic updated successfully.'))
+        return super().form_valid(form)
+
+
+class TopicDeleteView(LoginRequiredMixin, DeleteView):
+    model = Topic
+    template_name = 'library/topic_delete.html'
+    success_url = reverse_lazy('library:topic_list')
+    slug_url_kwarg = 'slug'
+
+    def get_queryset(self):
+        return Topic.objects.filter(user=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, _('Topic deleted successfully.'))
+        return super().form_valid(form)

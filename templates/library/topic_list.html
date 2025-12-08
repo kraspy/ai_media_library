@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="mx-auto my-4 container-list">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">{% trans "Manage Topics" %}</h1>
+        <a href="{% url 'library:topic_create' %}" class="btn btn-success px-4 py-2">{% trans "Create Topic" %}</a>
+    </div>
+
+    <div class="card bg-dark text-light shadow card-custom">
+        <div class="card-body">
+            {% if topic_tree %}
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% include "library/includes/topic_tree.html" with nodes=topic_tree %}
+                </ul>
+            {% else %}
+                <div class="text-center py-5 text-secondary">
+                    <i class="bi bi-diagram-3 display-4 d-block mb-3"></i>
+                    {% url 'library:topic_create' as create_url %}
+                    {% blocktrans %}No topics found. <a href="{{ create_url }}" class="text-primary">Create one</a> to get started.{% endblocktrans %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

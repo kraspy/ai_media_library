@@ -34,6 +34,19 @@ class Topic(models.Model):
             return f'{self.parent.title} -> {self.title}'
         return self.title
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            from django.utils.text import slugify
+
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Topic.objects.filter(user=self.user, slug=slug).exists():
+                slug = f'{base_slug}-{counter}'
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
 
 class MediaItem(models.Model):
     class MediaType(models.TextChoices):
