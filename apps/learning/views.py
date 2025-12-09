@@ -167,20 +167,36 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Get or create active session
-        from apps.learning.models import TutorChatSession
+        from apps.learning.models import Concept, StudyPlan, TutorChatSession
 
-        session = TutorChatSession.objects.filter(
-            user=self.request.user
-        ).first()
-        if not session:
-            session = TutorChatSession.objects.create(user=self.request.user)
+        if self.kwargs.get('create_new'):
+            session = TutorChatSession.objects.create(
+                user=self.request.user, title='New Chat'
+            )
+            context['session'] = session
+        else:
+            session_id = self.kwargs.get('pk')
+            if session_id:
+                session = get_object_or_404(
+                    TutorChatSession, id=session_id, user=self.request.user
+                )
+            else:
+                session = (
+                    TutorChatSession.objects.filter(user=self.request.user)
+                    .order_by('-updated_at')
+                    .first()
+                )
+                if not session:
+                    session = TutorChatSession.objects.create(
+                        user=self.request.user
+                    )
 
+        context['session'] = session
         context['session_id'] = session.id
-        context['messages'] = session.messages.all()
-
-        # Context Selection Data
-        from apps.learning.models import Concept, StudyPlan
+        context['chat_messages'] = session.messages.all()
+        context['sessions'] = TutorChatSession.objects.filter(
+            user=self.request.user
+        ).order_by('-updated_at')
 
         context['active_plans'] = StudyPlan.objects.filter(
             user=self.request.user, status=StudyPlan.Status.ACTIVE
@@ -193,6 +209,14 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
         )
 
         return context
+
+    def get(self, request, *args, **kwargs):
+        if kwargs.get('create_new'):
+            from apps.learning.models import TutorChatSession
+
+            session = TutorChatSession.objects.create(user=request.user)
+            return redirect('learning:tutor_session', pk=session.id)
+        return super().get(request, *args, **kwargs)
 
 
 class TutorAPIView(LoginRequiredMixin, View):
@@ -212,12 +236,9 @@ class TutorAPIView(LoginRequiredMixin, View):
             if not user_message or not session_id:
                 return JsonResponse({'error': 'Missing data'}, status=400)
 
-            # verify session ownership
             session = get_object_or_404(
                 TutorChatSession, id=session_id, user=request.user
             )
-
-            # Handle Context Injection
             context_type = data.get('context_type')
             context_id = data.get('context_id')
             context_text = ''
@@ -232,20 +253,12 @@ class TutorAPIView(LoginRequiredMixin, View):
                         )
                         context_text = f"\n\n[Context: User is referring to Study Plan '{plan.topic.title}'. Plan ID: {plan.id}]"
                     elif context_type == 'concept':
-                        # Concepts might not be directly owned by user, but linked via study units
-                        # Check access loosely or just get by ID for simplicity if valid
                         concept = Concept.objects.get(id=context_id)
                         context_text = f"\n\n[Context: User is referring to Concept '{concept.title}'. Description: {concept.description}]"
                 except Exception:
-                    pass  # Ignore invalid context IDs
+                    pass
 
-            # Run Agent
             agent = TutorAgent()
-            # Append context to the message invisible to the user?
-            # Actually, the agent.run method adds it to history.
-            # We might want to persist the context in the history for future reference,
-            # OR just make it part of this turn.
-
             full_input = user_message + context_text
 
             response = agent.run(full_input, session_id=str(session.id))

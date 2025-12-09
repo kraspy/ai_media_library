@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-08 14:08+0000\n"
+"POT-Creation-Date: 2025-12-09 14:37+0000\n"
 "PO-Revision-Date: 2025-12-05 21:50+0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,6 @@ msgid "Summarization Prompt"
 msgstr "Промпт для суммаризации"
 
 #: apps/core/models.py:44
-#| msgid "System prompt for Summarization."
 msgid "System prompt for Concept Extraction Agent."
 msgstr "Системный промпт для суммаризации."
 
@@ -81,9 +80,10 @@ msgstr "Промпт учителя"
 msgid "Settings"
 msgstr "Настройки"
 
-#: apps/learning/models.py:14 apps/library/models.py:22
-#: apps/library/models.py:70 templates/library/list.html:35
-#: templates/library/topic_form.html:28 templates/library/update.html:11
+#: apps/learning/models.py:14 apps/learning/models.py:201
+#: apps/library/models.py:22 apps/library/models.py:70
+#: templates/library/list.html:35 templates/library/topic_form.html:28
+#: templates/library/update.html:11
 msgid "Title"
 msgstr "Название"
 
@@ -106,7 +106,7 @@ msgstr "Уровень сложности (1-5)"
 
 #: apps/learning/models.py:25 apps/learning/models.py:68
 #: apps/learning/models.py:114 apps/learning/models.py:180
-#: apps/learning/models.py:201 apps/learning/models.py:232
+#: apps/learning/models.py:202 apps/learning/models.py:233
 #: apps/library/models.py:24 apps/library/models.py:91
 msgid "Created At"
 msgstr "Создано"
@@ -116,12 +116,12 @@ msgstr "Создано"
 msgid "Concept"
 msgstr "Концепция"
 
-#: apps/learning/models.py:29 templates/learning/tutor.html:48
+#: apps/learning/models.py:29
 msgid "Concepts"
 msgstr "Концепции"
 
 #: apps/learning/models.py:44 apps/learning/models.py:92
-#: apps/learning/models.py:199 apps/learning/models.py:219
+#: apps/learning/models.py:199 apps/learning/models.py:220
 #: apps/library/models.py:12 apps/library/models.py:68
 msgid "User"
 msgstr "Пользователь"
@@ -211,7 +211,7 @@ msgstr "Статус"
 msgid "Study Plan"
 msgstr "Учебный план"
 
-#: apps/learning/models.py:118 templates/learning/tutor.html:45
+#: apps/learning/models.py:118 templates/learning/tutor.html:72
 msgid "Study Plans"
 msgstr "Учебные планы"
 
@@ -259,42 +259,39 @@ msgstr "Вопрос"
 msgid "Quiz Questions"
 msgstr "Вопросы"
 
-#: apps/learning/models.py:202
-#| msgid "Created At"
+#: apps/learning/models.py:203
 msgid "Updated At"
 msgstr "Создано"
 
-#: apps/learning/models.py:205
-#| msgid "Exit Session"
+#: apps/learning/models.py:206
 msgid "Tutor Chat Session"
 msgstr "Выйти из сессии"
 
-#: apps/learning/models.py:206
+#: apps/learning/models.py:207
 msgid "Tutor Chat Sessions"
 msgstr "Чаты с Учителем"
 
-#: apps/learning/models.py:220
+#: apps/learning/models.py:221
 msgid "Assistant"
 msgstr "Ассистент"
 
-#: apps/learning/models.py:226
-#| msgid "Exit Session"
+#: apps/learning/models.py:227
 msgid "Session"
 msgstr "Выйти из сессии"
 
-#: apps/learning/models.py:229
+#: apps/learning/models.py:230
 msgid "Role"
 msgstr "Роль"
 
-#: apps/learning/models.py:231
+#: apps/learning/models.py:232
 msgid "Content"
 msgstr "Содержимое"
 
-#: apps/learning/models.py:235
+#: apps/learning/models.py:236
 msgid "Chat Message"
 msgstr "Сообщение чата"
 
-#: apps/learning/models.py:236
+#: apps/learning/models.py:237
 msgid "Chat Messages"
 msgstr "Сообщения чата"
 
@@ -383,7 +380,8 @@ msgid ""
 "File \"%(filename)s\" uploaded, but analysis could not be started due to an "
 "API error."
 msgstr ""
-"Файл \"%(filename)s\" загружен, но анализ не удалось запустить из-за ошибки API."
+"Файл \"%(filename)s\" загружен, но анализ не удалось запустить из-за ошибки "
+"API."
 
 #: apps/library/views.py:121
 msgid "Files uploaded successfully."
@@ -394,10 +392,10 @@ msgstr "Файлы успешно загружены."
 msgid ""
 "Analysis re-started, but %(count)d items failed to schedule due to API error."
 msgstr ""
-"Анализ перезапущен, но для %(count)d элементов не удалось запланировать задачи из-за ошибки API."
+"Анализ перезапущен, но для %(count)d элементов не удалось запланировать "
+"задачи из-за ошибки API."
 
 #: apps/library/views.py:178
-#| msgid "Restart AI analysis for selected items"
 msgid "Analysis re-started for selected items."
 msgstr "Перезапустить AI анализ для выбранных элементов"
 
@@ -437,7 +435,7 @@ msgstr "Админка"
 msgid "Learning"
 msgstr "Обучение"
 
-#: templates/base.html:24 templates/learning/tutor.html:16
+#: templates/base.html:24
 msgid "AI Tutor"
 msgstr "AI Учитель"
 
@@ -598,23 +596,23 @@ msgstr "Правильный ответ"
 msgid "Explanation"
 msgstr "Пояснение"
 
-#: templates/learning/quiz.html:56
+#: templates/learning/quiz.html:57
 msgid "Retry Quiz"
 msgstr "Повторить квиз"
 
-#: templates/learning/quiz.html:58
+#: templates/learning/quiz.html:59
 msgid "Continue Learning"
 msgstr "Продолжить обучение"
 
-#: templates/learning/quiz.html:60
+#: templates/learning/quiz.html:61
 msgid "Back to Plan"
 msgstr "Назад к плану"
 
-#: templates/learning/quiz.html:66
+#: templates/learning/quiz.html:67
 msgid "Study Material"
 msgstr "Учебный материал"
 
-#: templates/learning/quiz.html:90
+#: templates/learning/quiz.html:93
 msgid "Submit Answers"
 msgstr "Отправить ответы"
 
@@ -680,47 +678,70 @@ msgstr "Легко"
 msgid "Exit Session"
 msgstr "Выйти из сессии"
 
-#: templates/learning/tutor.html:18
-#| msgid "Parent Topic"
+#: templates/learning/tutor.html:13 templates/learning/tutor.html:167
+msgid "New Chat"
+msgstr "Новый чат"
+
+#: templates/learning/tutor.html:16
+msgid "Recent Chats"
+msgstr "Недавние чаты"
+
+#: templates/learning/tutor.html:42
 msgid "Select Topic"
-msgstr "Родительская тема"
+msgstr "Выбрать тему"
 
-#: templates/learning/tutor.html:19 templates/learning/tutor.html:54
-#: templates/learning/tutor.html:55
+#: templates/learning/tutor.html:43 templates/learning/tutor.html:81
+#: templates/learning/tutor.html:82
 msgid "General Chat"
-msgstr ""
+msgstr "Общий чат"
 
-#: templates/learning/tutor.html:22
+#: templates/learning/tutor.html:47
+msgid "Edit Title"
+msgstr "Изменить название"
+
+#: templates/learning/tutor.html:50
 msgid "Refresh Chat"
 msgstr "Обновить чат"
 
-#: templates/learning/tutor.html:39
+#: templates/learning/tutor.html:66
 msgid "Select Learning Context"
-msgstr ""
+msgstr "Выберите контекст обучения"
 
-#: templates/learning/tutor.html:71
+#: templates/learning/tutor.html:98
 msgid "No concepts studied recently."
-msgstr ""
+msgstr "Нет недавно изученных концепций."
 
-#: templates/learning/tutor.html:92 templates/learning/tutor.html:233
+#: templates/learning/tutor.html:117 templates/learning/tutor.html:295
 msgid "You"
 msgstr "Вы"
 
-#: templates/learning/tutor.html:92 templates/learning/tutor.html:233
+#: templates/learning/tutor.html:117 templates/learning/tutor.html:295
 msgid "Tutor"
 msgstr "Репетитор"
 
-#: templates/learning/tutor.html:102
+#: templates/learning/tutor.html:127
 msgid "Start a conversation with your AI Tutor!"
 msgstr "Начните разговор с вашим AI репетитором!"
 
-#: templates/learning/tutor.html:112
+#: templates/learning/tutor.html:137
 msgid "Tutor is thinking..."
 msgstr "Репетитор думает..."
 
-#: templates/learning/tutor.html:121
+#: templates/learning/tutor.html:146
 msgid "Ask a question..."
 msgstr "Задайте вопрос..."
+
+#: templates/learning/tutor.html:161
+msgid "Chat History"
+msgstr "История чатов"
+
+#: templates/learning/tutor.html:184
+msgid "Enter new chat title:"
+msgstr "Введите новое название чата:"
+
+#: templates/learning/tutor.html:191
+msgid "Renaming not implemented yet."
+msgstr "Переименование пока не реализовано."
 
 #: templates/library/delete.html:7
 msgid "Delete Media Item?"
@@ -817,17 +838,14 @@ msgstr ""
 "primary\">Загрузите первый</a>, чтобы начать."
 
 #: templates/library/topic_delete.html:10
-#: templates/library/topic_delete.html:10
 msgid "Delete Topic?"
 msgstr "Удалить тему?"
 
-#: templates/library/topic_delete.html:14
 #: templates/library/topic_delete.html:14
 msgid "Are you sure you want to delete the topic"
 msgstr "Вы уверены, что хотите удалить тему"
 
 #: templates/library/topic_delete.html:17
-#| msgid "Learning"
 msgid "Warning"
 msgstr "Обучение"
 
@@ -838,15 +856,12 @@ msgstr "Все подтемы также будут удалены."
 #: templates/library/topic_delete.html:20
 msgid ""
 "Media items in this topic will NOT be deleted, but will become uncategorized."
-msgstr ""
-"Медиафайлы в этой теме НЕ будут удалены, но станут без категории."
+msgstr "Медиафайлы в этой теме НЕ будут удалены, но станут без категории."
 
-#: templates/library/topic_form.html:11
 #: templates/library/topic_form.html:11
 msgid "Edit Topic"
 msgstr "Редактировать тему"
 
-#: templates/library/topic_form.html:13
 #: templates/library/topic_form.html:13
 msgid "Create New Topic"
 msgstr "Создать новую тему"
@@ -864,16 +879,13 @@ msgid "Save Changes"
 msgstr "Сохранить изменения"
 
 #: templates/library/topic_form.html:56 templates/library/topic_list.html:8
-#: templates/library/topic_form.html:56 templates/library/topic_list.html:8
 msgid "Create Topic"
 msgstr "Создать тему"
 
 #: templates/library/topic_list.html:7
-#: templates/library/topic_list.html:7
 msgid "Manage Topics"
 msgstr "Управление темами"
 
-#: templates/library/topic_list.html:21
 #: templates/library/topic_list.html:21
 #, python-format
 msgid ""

@@ -5,28 +5,55 @@
 
 {% block content %}
 <div class="container-fluid py-2 py-md-4" style="height: calc(100vh - 70px);">
-    <div class="row h-100 justify-content-center">
-        <div class="col-md-10 col-lg-8 h-100 d-flex flex-column">
+    <div class="row h-100">
+        <!-- Sidebar: Chat History -->
+        <div class="col-md-3 d-none d-md-flex flex-column h-100 border-end border-secondary pe-3">
+             <div class="d-grid mb-3">
+                <a href="{% url 'learning:tutor_create' %}" class="btn btn-info">
+                    <i class="bi bi-plus-lg me-2"></i>{% trans "New Chat" %}
+                </a>
+            </div>
+            <h6 class="text-secondary text-uppercase small ls-1 mb-3">{% trans "Recent Chats" %}</h6>
+            <div class="list-group list-group-flush overflow-auto flex-grow-1 custom-scrollbar">
+                {% for s in sessions %}
+                <a href="{% url 'learning:tutor_session' s.id %}" class="list-group-item list-group-item-action border-0 rounded mb-1 text-truncate {% if s.id == session.id %}active bg-secondary-subtle text-light{% else %}bg-transparent text-secondary{% endif %}">
+                    <i class="bi bi-chat-left-text me-2"></i> {{ s.title }}
+                    <br><small class="opacity-50 ps-4">{{ s.updated_at|date:"M d, H:i" }}</small>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="col-md-9 col-lg-9 h-100 d-flex flex-column ps-md-3">
             
             <!-- Header -->
             <div class="card card-custom bg-dark text-light mb-3 flex-shrink-0">
                 <div class="card-body d-flex justify-content-between align-items-center py-2 px-3">
-                    <div class="d-flex align-items-center">
-                        <h5 class="mb-0 me-3">
-                            <i class="bi bi-robot me-2 text-info"></i>{% trans "AI Tutor" %}
+                    <div class="d-flex align-items-center text-truncate">
+                        <!-- Mobile Toggle -->
+                        <button class="btn btn-sm btn-outline-secondary d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatSidebar" aria-controls="chatSidebar">
+                             <i class="bi bi-list"></i>
+                        </button>
+
+                        <h5 class="mb-0 me-3 text-truncate">
+                            <i class="bi bi-robot me-2 text-info"></i>{{ session.title }}
                         </h5>
                         <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#contextModal" title="{% trans 'Select Topic' %}">
                             <i class="bi bi-bookmarks-fill me-1"></i> <span id="current-context-label">{% trans "General Chat" %}</span>
                         </button>
                     </div>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()" title="{% trans 'Refresh Chat' %}">
-                        <i class="bi bi-arrow-clockwise"></i>
-                    </button>
+                    <div>
+                         <button class="btn btn-sm btn-outline-warning me-1" onclick="editTitle()" title="{% trans 'Edit Title' %}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()" title="{% trans 'Refresh Chat' %}">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- ... Chat Window ... -->
-            
             <!-- Hidden Input for Context -->
             <input type="hidden" id="context-type" value="">
             <input type="hidden" id="context-id" value="">
@@ -45,7 +72,7 @@
                                     <button class="nav-link active text-light" data-bs-toggle="tab" data-bs-target="#plans-tab" type="button">{% trans "Study Plans" %}</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link text-light" data-bs-toggle="tab" data-bs-target="#concepts-tab" type="button">{% trans "Concepts" %}</button>
+                                    <button class="nav-link text-light" data-bs-toggle="tab" data-bs-target="#concepts-tab" type="button">{% trans "Concepts" %></button>
                                 </li>
                             </ul>
                             <div class="tab-content" id="contextTabContent">
@@ -78,14 +105,12 @@
                 </div>
             </div>
 
-            <!-- ... (Chat Window Code) ... -->
-
 
             <!-- Chat Window -->
             <div class="card card-custom bg-dark text-light flex-grow-1 mb-3 position-relative" style="overflow: hidden;">
                 <div class="card-body p-0 d-flex flex-column h-100">
                     <div id="chat-messages" class="flex-grow-1 p-3" style="overflow-y: auto;">
-                        {% for msg in messages %}
+                        {% for msg in chat_messages %}
                             <div class="d-flex mb-3 {% if msg.role == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
                                 <div class="p-3 rounded-3 {% if msg.role == 'user' %}bg-primary text-white{% else %}bg-secondary text-light{% endif %}" style="max-width: 80%;">
                                     <div class="mb-1 small opacity-75">
@@ -130,8 +155,43 @@
     </div>
 </div>
 
+<!-- Mobile Offcanvas Sidebar -->
+<div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="chatSidebar" aria-labelledby="chatSidebarLabel">
+  <div class="offcanvas-header border-bottom border-secondary">
+    <h5 class="offcanvas-title" id="chatSidebarLabel">{% trans "Chat History" %}</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+      <div class="d-grid mb-3">
+        <a href="{% url 'learning:tutor_create' %}" class="btn btn-info">
+            <i class="bi bi-plus-lg me-2"></i>{% trans "New Chat" %}
+        </a>
+    </div>
+    <div class="list-group list-group-flush overflow-auto flex-grow-1">
+        {% for s in sessions %}
+        <a href="{% url 'learning:tutor_session' s.id %}" class="list-group-item list-group-item-action border-0 rounded mb-1 text-truncate {% if s.id == session.id %}active bg-secondary-subtle text-light{% else %}bg-transparent text-secondary{% endif %}">
+            <i class="bi bi-chat-left-text me-2"></i> {{ s.title }}
+        </a>
+        {% endfor %}
+    </div>
+  </div>
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
+    function editTitle() {
+        const newTitle = prompt("{% trans 'Enter new chat title:' %}", "{{ session.title }}");
+        if (newTitle) {
+            // Simple approach: reload with query param or dedicated API. 
+            // For now let's just use existing message API or a quick fetch if we had an endpoint.
+            // Since we don't have a dedicated update title API yet, we'll skip implementation or add a TODO.
+            // Actually, let's implement a simple update via API if possible, but we haven't built it.
+            // fallback:
+             alert("{% trans 'Renaming not implemented yet.' %}");
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const chatMessages = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
@@ -167,7 +227,9 @@
         });
 
         // ... Highlight ...
-        Prism.highlightAll();
+        if (typeof Prism !== 'undefined') {
+             Prism.highlightAll();
+        }
 
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
@@ -257,11 +319,13 @@
                 </div>
             `;
             chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            if (role === 'assistant') {
-                Prism.highlightAllUnder(div);
-            }
+            // Use requestAnimationFrame to ensure DOM is updated before scrolling/highlighting
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                if (role === 'assistant' && typeof Prism !== 'undefined') {
+                    Prism.highlightAllUnder(div);
+                }
+            });
         }
         
         function escapeHtml(text) {

@@ -198,6 +198,7 @@ class TutorChatSession(models.Model):
         related_name='tutor_sessions',
         verbose_name=_('User'),
     )
+    title = models.CharField(_('Title'), max_length=100, default='New Chat')
     created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
     updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
 
@@ -207,7 +208,7 @@ class TutorChatSession(models.Model):
         ordering = ['-updated_at']
 
     def __str__(self):
-        return f'Session {self.id} for {self.user.username}'
+        return f'{self.title} ({self.user.username})'
 
 
 class TutorChatMessage(models.Model):
