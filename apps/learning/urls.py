@@ -7,6 +7,7 @@ from .views import (
     StudySessionView,
     TutorAPIView,
     TutorChatView,
+    delete_tutor_session,
 )
 
 app_name = 'learning'
@@ -23,6 +24,11 @@ urlpatterns = [
         TutorChatView.as_view(),
         {'create_new': True},
         name='tutor_create',
+    ),
+    path(
+        'tutor/<int:pk>/delete/',
+        delete_tutor_session,
+        name='tutor_delete',
     ),
     path('api/tutor/', TutorAPIView.as_view(), name='tutor_api'),
 ]

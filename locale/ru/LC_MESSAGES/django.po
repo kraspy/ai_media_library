@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-09 14:37+0000\n"
+"POT-Creation-Date: 2025-12-11 12:49+0000\n"
 "PO-Revision-Date: 2025-12-05 21:50+0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -211,7 +211,7 @@ msgstr "Статус"
 msgid "Study Plan"
 msgstr "Учебный план"
 
-#: apps/learning/models.py:118 templates/learning/tutor.html:72
+#: apps/learning/models.py:118 templates/learning/tutor.html:78
 msgid "Study Plans"
 msgstr "Учебные планы"
 
@@ -678,7 +678,7 @@ msgstr "Легко"
 msgid "Exit Session"
 msgstr "Выйти из сессии"
 
-#: templates/learning/tutor.html:13 templates/learning/tutor.html:167
+#: templates/learning/tutor.html:13 templates/learning/tutor.html:173
 msgid "New Chat"
 msgstr "Новый чат"
 
@@ -690,8 +690,8 @@ msgstr "Недавние чаты"
 msgid "Select Topic"
 msgstr "Выбрать тему"
 
-#: templates/learning/tutor.html:43 templates/learning/tutor.html:81
-#: templates/learning/tutor.html:82
+#: templates/learning/tutor.html:43 templates/learning/tutor.html:87
+#: templates/learning/tutor.html:88
 msgid "General Chat"
 msgstr "Общий чат"
 
@@ -700,46 +700,54 @@ msgid "Edit Title"
 msgstr "Изменить название"
 
 #: templates/learning/tutor.html:50
+msgid "Are you sure you want to delete this chat?"
+msgstr "Вы уверены, что хотите удалить этот чат?"
+
+#: templates/learning/tutor.html:52
+msgid "Delete Chat"
+msgstr "Удалить чат"
+
+#: templates/learning/tutor.html:56
 msgid "Refresh Chat"
 msgstr "Обновить чат"
 
-#: templates/learning/tutor.html:66
+#: templates/learning/tutor.html:72
 msgid "Select Learning Context"
 msgstr "Выберите контекст обучения"
 
-#: templates/learning/tutor.html:98
+#: templates/learning/tutor.html:104
 msgid "No concepts studied recently."
 msgstr "Нет недавно изученных концепций."
 
-#: templates/learning/tutor.html:117 templates/learning/tutor.html:295
+#: templates/learning/tutor.html:123 templates/learning/tutor.html:301
 msgid "You"
 msgstr "Вы"
 
-#: templates/learning/tutor.html:117 templates/learning/tutor.html:295
+#: templates/learning/tutor.html:123 templates/learning/tutor.html:301
 msgid "Tutor"
 msgstr "Репетитор"
 
-#: templates/learning/tutor.html:127
+#: templates/learning/tutor.html:133
 msgid "Start a conversation with your AI Tutor!"
 msgstr "Начните разговор с вашим AI репетитором!"
 
-#: templates/learning/tutor.html:137
+#: templates/learning/tutor.html:143
 msgid "Tutor is thinking..."
 msgstr "Репетитор думает..."
 
-#: templates/learning/tutor.html:146
+#: templates/learning/tutor.html:152
 msgid "Ask a question..."
 msgstr "Задайте вопрос..."
 
-#: templates/learning/tutor.html:161
+#: templates/learning/tutor.html:167
 msgid "Chat History"
 msgstr "История чатов"
 
-#: templates/learning/tutor.html:184
+#: templates/learning/tutor.html:190
 msgid "Enter new chat title:"
 msgstr "Введите новое название чата:"
 
-#: templates/learning/tutor.html:191
+#: templates/learning/tutor.html:197
 msgid "Renaming not implemented yet."
 msgstr "Переименование пока не реализовано."
 

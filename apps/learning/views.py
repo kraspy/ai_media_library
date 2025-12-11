@@ -1,3 +1,5 @@
+import django.contrib.auth.decorators
+import django.views.decorators.http
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -267,3 +269,13 @@ class TutorAPIView(LoginRequiredMixin, View):
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
+
+
+@django.views.decorators.http.require_POST
+@django.contrib.auth.decorators.login_required
+def delete_tutor_session(request, pk):
+    from apps.learning.models import TutorChatSession
+
+    session = get_object_or_404(TutorChatSession, id=pk, user=request.user)
+    session.delete()
+    return redirect('learning:tutor')
