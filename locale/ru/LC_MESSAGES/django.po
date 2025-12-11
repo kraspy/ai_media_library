@@ -926,3 +926,6 @@ msgstr "Имя пользователя"
 #: templates/users/login.html:15
 msgid "Password"
 msgstr "Пароль"
+
+msgid "Learning Contexts"
+msgstr "Контексты обучения"
