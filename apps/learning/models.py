@@ -199,6 +199,10 @@ class TutorChatSession(models.Model):
         verbose_name=_('User'),
     )
     title = models.CharField(_('Title'), max_length=100, default='New Chat')
+    context_type = models.CharField(
+        _('Context Type'), max_length=20, null=True, blank=True
+    )
+    context_id = models.IntegerField(_('Context ID'), null=True, blank=True)
     created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
     updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
 

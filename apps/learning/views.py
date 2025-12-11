@@ -210,6 +210,23 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
             .order_by('-created_at')[:20]
         )
 
+        if session.context_type and session.context_id:
+            context['context_type'] = session.context_type
+            context['context_id'] = session.context_id
+            try:
+                if session.context_type == 'plan':
+                    plan = StudyPlan.objects.get(
+                        id=session.context_id, user=self.request.user
+                    )
+                    context['context_label'] = plan.topic.title
+                elif session.context_type == 'concept':
+                    concept = Concept.objects.get(id=session.context_id)
+                    context['context_label'] = concept.title
+            except (StudyPlan.DoesNotExist, Concept.DoesNotExist):
+                session.context_type = None
+                session.context_id = None
+                session.save()
+
         return context
 
     def get(self, request, *args, **kwargs):
@@ -257,6 +274,11 @@ class TutorAPIView(LoginRequiredMixin, View):
                     elif context_type == 'concept':
                         concept = Concept.objects.get(id=context_id)
                         context_text = f"\n\n[Context: User is referring to Concept '{concept.title}'. Description: {concept.description}]"
+
+                    session.context_type = context_type
+                    session.context_id = context_id
+                    session.save()
+
                 except Exception:
                     pass
 
@@ -266,6 +288,55 @@ class TutorAPIView(LoginRequiredMixin, View):
             response = agent.run(full_input, session_id=str(session.id))
 
             return JsonResponse({'response': response, 'status': 'success'})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+
+class TutorContextUpdateView(LoginRequiredMixin, View):
+    def post(self, request):
+        import json
+
+        from django.http import JsonResponse
+
+        from apps.learning.models import Concept, StudyPlan, TutorChatSession
+
+        try:
+            data = json.loads(request.body)
+            session_id = data.get('session_id')
+            context_type = data.get('context_type')
+            context_id = data.get('context_id')
+
+            if not session_id:
+                return JsonResponse(
+                    {'error': 'Missing session_id'}, status=400
+                )
+
+            session = get_object_or_404(
+                TutorChatSession, id=session_id, user=request.user
+            )
+
+            # Validate context if provided
+            if context_type and context_id:
+                try:
+                    if context_type == 'plan':
+                        StudyPlan.objects.get(id=context_id, user=request.user)
+                    elif context_type == 'concept':
+                        Concept.objects.get(id=context_id)
+                    else:
+                        return JsonResponse(
+                            {'error': 'Invalid context type'}, status=400
+                        )
+                except (StudyPlan.DoesNotExist, Concept.DoesNotExist):
+                    return JsonResponse(
+                        {'error': 'Context object not found'}, status=404
+                    )
+
+            session.context_type = context_type
+            session.context_id = context_id if context_type else None
+            session.save()
+
+            return JsonResponse({'status': 'success'})
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)

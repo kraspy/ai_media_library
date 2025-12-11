@@ -229,6 +229,25 @@
                 this.classList.add('active');
 
                 contextModal.hide();
+
+                fetch("{% url 'learning:tutor_context' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        context_type: type,
+                        context_id: id
+                    })
+                }).then(response => {
+                    if (!response.ok) {
+                        console.error('Failed to update context');
+                    }
+                }).catch(error => {
+                    console.error('Error updating context:', error);
+                });
             });
         });
 
