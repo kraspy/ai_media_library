@@ -180,8 +180,10 @@ def summarize_media(media_item_id):
         logger.info(f'Summarization completed for {media_item.id}')
 
         from apps.learning.tasks import generate_content_from_media
+        from apps.library.tasks import index_media
 
         generate_content_from_media.delay(media_item.id)
+        index_media.delay(media_item.id)
 
     except MediaItem.DoesNotExist:
         pass
@@ -193,3 +195,26 @@ def summarize_media(media_item_id):
             media_item.error_log = traceback.format_exc()
             media_item.save()
         raise e
+
+
+@shared_task
+def index_media(media_item_id):
+    """
+    Task to index a media item in the RAG vector store.
+    """
+    try:
+        media_item = MediaItem.objects.get(id=media_item_id)
+        logger.info(f'Starting RAG indexing for {media_item.id}')
+
+        from apps.library.services.rag_service import RAGService
+
+        rag_service = RAGService()
+        rag_service.index_media_item(media_item)
+
+        logger.info(f'RAG indexing completed for {media_item.id}')
+
+    except MediaItem.DoesNotExist:
+        logger.error(f'MediaItem {media_item_id} not found regarding indexing')
+    except Exception as e:
+        logger.error(f'Error indexing media item {media_item_id}: {e}')
+        traceback.print_exc()
