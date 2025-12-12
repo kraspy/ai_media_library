@@ -3,11 +3,12 @@
 
 {% load markdown_extras %}
 
+{% block main_class %}flex-grow-1 d-flex flex-column p-0 bg-dark text-light overflow-hidden{% endblock %}
 {% block content %}
-<div class="container-fluid py-2 py-md-4" style="height: calc(100vh - 70px);">
-    <div class="row h-100">
+<div class="container-fluid flex-grow-1 d-flex flex-column py-2 py-md-4">
+    <div class="row flex-grow-1">
         <!-- Sidebar: Chat History -->
-        <div class="col-md-3 d-none d-md-flex flex-column h-100 border-end border-secondary pe-3">
+        <div class="col-md-3 d-none d-md-flex flex-column border-end border-secondary pe-3">
              <div class="d-grid mb-3">
                 <a href="{% url 'learning:tutor_create' %}" class="btn btn-info">
                     <i class="bi bi-plus-lg me-2"></i>{% trans "New Chat" %}
@@ -25,7 +26,7 @@
         </div>
 
         <!-- Main Chat Area -->
-        <div class="col-md-9 col-lg-9 h-100 d-flex flex-column ps-md-3">
+        <div class="col-md-9 col-lg-9 d-flex flex-column ps-md-3">
             
             <!-- Header -->
             <div class="card card-custom bg-dark text-light mb-3 flex-shrink-0">
@@ -324,16 +325,6 @@
             if (role === 'assistant') {
                 renderedContent = marked.parse(content);
             } else {
-                // Escape HTML for user input to prevent XSS if we were persisting it without cleaning (but here it's just DOM display)
-                // For user, let's keep it simple or also support markdown?
-                // Text is safer for user input usually unless we sanitize.
-                // Let's plain text user input for now or minimal formatting.
-                // Actually, let's use textContent equivalent for user to be safe, or just render as is if trusted.
-                // But wait, the previous code used ${content} in innerHTML which is XSS risky if not careful.
-                // Given we are displaying what user just typed, it's reflected XSS if we aren't careful.
-                // Let's use marked for user too, it handles some stuff, but better to be safe.
-                // For now, let's follow the requirement: "Tutor answers... in markdown".
-                // I will escape user content to be safe.
                 renderedContent = escapeHtml(content).replace(/\n/g, '<br>');
             }
 

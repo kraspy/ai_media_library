@@ -29,7 +29,7 @@
     <div class="card bg-dark text-light mb-4 shadow card-custom">
         <div class="card-body">
             <h3 class="mb-3">{% trans "Summary" %}</h3>
-            <div class="markdown-body">{{ item.summary|markdown|safe }}</div>
+            <div class="markdown-body">{{ item.summary|markdown_format }}</div>
         </div>
     </div>
     {% endif %}
@@ -53,4 +53,3 @@
     {% endif %}
 </div>
 {% endblock %}
-ё
