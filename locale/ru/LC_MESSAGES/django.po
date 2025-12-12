@@ -397,7 +397,7 @@ msgstr ""
 
 #: apps/library/views.py:178
 msgid "Analysis re-started for selected items."
-msgstr "Перезапустить AI анализ для выбранных элементов"
+msgstr "Перезапуск AI анализ для выбранных элементов"
 
 #: apps/library/views.py:238
 msgid "Topic created successfully."
@@ -814,7 +814,7 @@ msgstr "Выбрано"
 
 #: templates/library/list.html:18
 msgid "Restart AI analysis for selected items"
-msgstr "Перезапустить AI анализ для выбранных элементов"
+msgstr "Перезапуск AI анализ для выбранных элементов"
 
 #: templates/library/list.html:19
 msgid "Re-analyze"

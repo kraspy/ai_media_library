@@ -18,7 +18,10 @@ class PlanGenerationAgent:
         self.parser = PydanticOutputParser(pydantic_object=StudyPlanSchema)
 
     def run(
-        self, concepts: list[ConceptSchema], topic_name: str
+        self,
+        concepts: list[ConceptSchema],
+        topic_name: str,
+        topic_context: str = '',
     ) -> StudyPlanSchema:
         concepts_text = '\n'.join(
             [
@@ -30,17 +33,19 @@ class PlanGenerationAgent:
         settings = ProjectSettings.load()
         system_prompt = settings.plan_generation_prompt
 
-        # Inject Language Instruction
+        if topic_context:
+            system_prompt += f'\n\nContext Topic: {topic_context}'
+
         current_language = translation.get_language()
-        system_prompt += f"\n\nIMPORTANT: Provide all Output (Titles, Descriptions) in language code: '{current_language}'."
+        system_prompt += f"\n\nIMPORTANT: Provide all Output (Titles, Descriptions) in language: '{current_language}'."
 
         prompt = ChatPromptTemplate.from_messages(
             [
-                ('system', system_prompt),
+                ('system', '{system_prompt}'),
                 ('system', '{format_instructions}'),
                 (
                     'user',
-                    f"Create a study plan for the topic '{topic_name}' using these concepts:\n\n{concepts_text}",
+                    "Create a study plan for the topic '{topic_name}' using these concepts:\n\n{concepts_text}",
                 ),
             ]
         )
@@ -48,5 +53,10 @@ class PlanGenerationAgent:
         chain = prompt | self.llm | self.parser
 
         return chain.invoke(
-            {'format_instructions': self.parser.get_format_instructions()}
+            {
+                'system_prompt': system_prompt,
+                'format_instructions': self.parser.get_format_instructions(),
+                'topic_name': topic_name,
+                'concepts_text': concepts_text,
+            }
         )

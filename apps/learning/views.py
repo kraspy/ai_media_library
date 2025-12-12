@@ -270,7 +270,12 @@ class TutorAPIView(LoginRequiredMixin, View):
                         plan = StudyPlan.objects.get(
                             id=context_id, user=request.user
                         )
-                        context_text = f"\n\n[Context: User is referring to Study Plan '{plan.topic.title}'. Plan ID: {plan.id}]"
+                        plan_topic_title = (
+                            plan.topic.title
+                            if plan.topic
+                            else plan.media_item.title
+                        )
+                        context_text = f"\n\n[Context: User is referring to Study Plan '{plan_topic_title}'. Plan ID: {plan.id}]"
                     elif context_type == 'concept':
                         concept = Concept.objects.get(id=context_id)
                         context_text = f"\n\n[Context: User is referring to Concept '{concept.title}'. Description: {concept.description}]"

@@ -23,6 +23,7 @@ def analyze_media(media_item_id):
     try:
         media_item = MediaItem.objects.get(id=media_item_id)
         media_item.status = MediaItem.Status.PROCESSING
+        media_item.processing_step = 'Transcribing/Processing Media...'
         media_item.save()
 
         project_settings = ProjectSettings.load()
@@ -131,6 +132,7 @@ def summarize_media(media_item_id):
     try:
         media_item = MediaItem.objects.get(id=media_item_id)
         media_item.error_log = ''
+        media_item.processing_step = 'Generating Summary...'
         media_item.save()
 
         logger.info(f'Starting summarization for {media_item.id}')
@@ -163,7 +165,7 @@ def summarize_media(media_item_id):
             [
                 (
                     'system',
-                    'You are a professional text summarizer.',
+                    system_prompt,
                 ),
                 ('user', 'Summarize this text:\n\n{text}'),
             ]

@@ -30,7 +30,7 @@
                                 <div class="fw-bold mb-2">{{ result.question.question_data.question|markdown|safe }}</div>
                                 
                                 <div class="mb-2">
-                                    <strong>{% trans "Your Answer" %}:</strong> {{ result.user_answer }}
+                                    <strong>{% trans "Your Answer" %}:</strong> {{ result.user_answer|markdown|safe }}
                                     {% if result.is_correct %}
                                         <i class="bi bi-check-lg"></i>
                                     {% else %}
@@ -40,7 +40,7 @@
 
                                 {% if not result.is_correct %}
                                     <div class="mb-2 text-success">
-                                        <strong>{% trans "Correct Answer" %}:</strong> {{ result.correct_answer }}
+                                        <strong>{% trans "Correct Answer" %}:</strong> {{ result.correct_answer|markdown|safe }}
                                     </div>
                                 {% endif %}
 
@@ -82,7 +82,7 @@
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="q{{ question.id }}_opt{{ forloop.counter }}" value="{{ option }}" required>
                                             <label class="form-check-label" for="q{{ question.id }}_opt{{ forloop.counter }}">
-                                                {{ option }}
+                                                {{ option|markdown|safe }}
                                             </label>
                                         </div>
                                     {% endfor %}

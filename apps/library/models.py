@@ -81,6 +81,9 @@ class MediaItem(models.Model):
         choices=Status.choices,
         default=Status.PENDING,
     )
+    processing_step = models.CharField(
+        _('Processing Step'), max_length=255, blank=True, null=True
+    )
     transcription = models.TextField(_('Transcription'), blank=True)
     summary = models.TextField(_('Summary'), blank=True)
     error_log = models.TextField(

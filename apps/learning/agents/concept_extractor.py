@@ -17,13 +17,15 @@ class ConceptExtractionAgent:
         self.llm = get_llm(temperature=0.0)
         self.parser = PydanticOutputParser(pydantic_object=ConceptListSchema)
 
-    def run(self, text: str) -> ConceptListSchema:
+    def run(self, text: str, topic_context: str = '') -> ConceptListSchema:
         settings = ProjectSettings.load()
         system_prompt = settings.concept_extraction_prompt
 
-        # Inject Language Instruction
+        if topic_context:
+            system_prompt += f'\n\nContext Topic: {topic_context}'
+
         current_language = translation.get_language()
-        system_prompt += f"\n\nIMPORTANT: Provide all Output (Titles, Descriptions) in language code: '{current_language}'."
+        system_prompt += f"\n\nIMPORTANT: Provide all Output (Titles, Descriptions) in language: '{current_language}'."
 
         prompt = ChatPromptTemplate.from_messages(
             [

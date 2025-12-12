@@ -22,6 +22,17 @@
             {% if item.file %}
                 <p><strong>{% trans "File" %}:</strong> <a class="link-info" href="{{ item.file.url }}" target="_blank">{% trans "Download/View" %}</a></p>
             {% endif %}
+            {% if item.status == 'processing' %}
+                <div class="alert alert-info d-flex align-items-center mt-3" role="alert">
+                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div>
+                        <strong>{% trans "Processing..." %}</strong> <span class="ms-2">{{ item.processing_step|default:_("Please wait...") }}</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-light ms-auto" onclick="location.reload()">{% trans "Refresh" %}</button>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -29,7 +40,7 @@
     <div class="card bg-dark text-light mb-4 shadow card-custom">
         <div class="card-body">
             <h3 class="mb-3">{% trans "Summary" %}</h3>
-            <div class="markdown-body">{{ item.summary|markdown_format }}</div>
+            <div class="markdown-body">{{ item.summary|markdown|safe }}</div>
         </div>
     </div>
     {% endif %}

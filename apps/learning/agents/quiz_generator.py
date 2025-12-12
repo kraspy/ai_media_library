@@ -22,21 +22,24 @@ class QuizGenerationAgent:
         concept_title: str,
         concept_description: str,
         context_text: str = '',
+        topic_context: str = '',
     ) -> QuizSchema:
         settings = ProjectSettings.load()
         system_prompt = settings.quiz_generation_prompt
 
-        # Inject Language Instruction
+        if topic_context:
+            system_prompt += f'\n\nContext Topic: {topic_context}'
+
         current_language = translation.get_language()
-        system_prompt += f"\n\nIMPORTANT: Provide all Output (Questions, Options, Explanations) in language code: '{current_language}'."
+        system_prompt += f"\n\nIMPORTANT: Provide all Output (Questions, Options, Explanations) in language: '{current_language}'."
 
         prompt = ChatPromptTemplate.from_messages(
             [
-                ('system', system_prompt),
+                ('system', '{system_prompt}'),
                 ('system', '{format_instructions}'),
                 (
                     'user',
-                    f'Concept: {concept_title}\nDefinition: {concept_description}\nContext: {context_text}\n\nGenerate 3 questions.',
+                    'Concept: {concept_title}\nDefinition: {concept_description}\nContext: {context_text}\n\nGenerate 3 questions.',
                 ),
             ]
         )
@@ -44,5 +47,50 @@ class QuizGenerationAgent:
         chain = prompt | self.llm | self.parser
 
         return chain.invoke(
-            {'format_instructions': self.parser.get_format_instructions()}
+            {
+                'system_prompt': system_prompt,
+                'format_instructions': self.parser.get_format_instructions(),
+                'concept_title': concept_title,
+                'concept_description': concept_description,
+                'context_text': context_text,
+            }
+        )
+
+    async def arun(
+        self,
+        concept_title: str,
+        concept_description: str,
+        context_text: str = '',
+        topic_context: str = '',
+    ) -> QuizSchema:
+        settings = ProjectSettings.load()
+        system_prompt = settings.quiz_generation_prompt
+
+        if topic_context:
+            system_prompt += f'\n\nContext Topic: {topic_context}'
+
+        current_language = translation.get_language()
+        system_prompt += f"\n\nIMPORTANT: Provide all Output (Questions, Options, Explanations) in language: '{current_language}'."
+
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ('system', '{system_prompt}'),
+                ('system', '{format_instructions}'),
+                (
+                    'user',
+                    'Concept: {concept_title}\nDefinition: {concept_description}\nContext: {context_text}\n\nGenerate 3 questions.',
+                ),
+            ]
+        )
+
+        chain = prompt | self.llm | self.parser
+
+        return await chain.ainvoke(
+            {
+                'system_prompt': system_prompt,
+                'format_instructions': self.parser.get_format_instructions(),
+                'concept_title': concept_title,
+                'concept_description': concept_description,
+                'context_text': context_text,
+            }
         )

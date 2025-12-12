@@ -1,6 +1,8 @@
+import asyncio
 import logging
 import traceback
 
+from asgiref.sync import async_to_sync
 from celery import shared_task
 from django.db import transaction
 
@@ -30,6 +32,10 @@ def generate_content_from_media(media_item_id):
         media_item = MediaItem.objects.get(id=media_item_id)
         logger.info(f'Starting content generation for {media_item.title}')
 
+        media_item.processing_step = 'Extracting Concepts...'
+        media_item.status = MediaItem.Status.PROCESSING
+        media_item.save(update_fields=['processing_step', 'status'])
+
         ai_service = AIService()
 
         text_content = media_item.summary or media_item.transcription
@@ -37,8 +43,16 @@ def generate_content_from_media(media_item_id):
             logger.warning(f'No text content found for {media_item.title}')
             return
 
+        topic_context = ''
+        if media_item.topic:
+            topic_context = media_item.topic.title
+            if media_item.topic.parent:
+                topic_context = (
+                    f'{media_item.topic.parent.title} -> {topic_context}'
+                )
+
         logger.info('Extracting concepts...')
-        concept_list = ai_service.extract_concepts(text_content)
+        concept_list = ai_service.extract_concepts(text_content, topic_context)
 
         saved_concepts = []
         with transaction.atomic():
@@ -57,14 +71,17 @@ def generate_content_from_media(media_item_id):
                     user=media_item.user,
                     concept=concept,
                     defaults={
-                        'front': f'What is {concept.title}?',
+                        'front': concept.title,
                         'back': concept.description,
                     },
                 )
 
         logger.info('Generating study plan...')
+        media_item.processing_step = 'Generating Study Plan...'
+        media_item.save(update_fields=['processing_step'])
+
         plan_schema = ai_service.generate_study_plan(
-            saved_concepts, media_item.title
+            saved_concepts, media_item.title, topic_context
         )
 
         with transaction.atomic():
@@ -93,24 +110,47 @@ def generate_content_from_media(media_item_id):
                     )
 
         logger.info('Generating quizzes...')
-        for concept in saved_concepts:
-            try:
-                quiz_schema = ai_service.generate_quiz(
-                    concept_title=concept.title,
-                    concept_description=concept.description,
-                    context_text=text_content[:2000],
-                )
+        media_item.processing_step = 'Generating Quizzes...'
+        media_item.save(update_fields=['processing_step'])
 
-                for question_schema in quiz_schema.questions:
-                    QuizQuestion.objects.create(
-                        concept=concept,
-                        question_data=question_schema.model_dump(),
-                        question_type=QuizQuestion.QuestionType.MULTIPLE_CHOICE,
-                    )
-            except Exception as e:
-                logger.error(
-                    f'Failed to generate quiz for concept {concept.title}: {e}'
-                )
+        async def _generate_quizzes_concurrently():
+            semaphore = asyncio.Semaphore(5)
+
+            async def generate_with_limit(concept):
+                async with semaphore:
+                    try:
+                        quiz_schema = await ai_service.generate_quiz_async(
+                            concept_title=concept.title,
+                            concept_description=concept.description,
+                            context_text=text_content[:2000],
+                            topic_context=topic_context,
+                        )
+                        return concept, quiz_schema
+                    except Exception as e:
+                        logger.error(
+                            f'Failed to generate quiz for concept {concept.title}: {e}'
+                        )
+                        return concept, None
+
+            tasks = [generate_with_limit(c) for c in saved_concepts]
+            results = await asyncio.gather(*tasks)
+            return results
+
+        results = async_to_sync(_generate_quizzes_concurrently)()
+
+        with transaction.atomic():
+            for concept, quiz_schema in results:
+                if quiz_schema:
+                    for question_schema in quiz_schema.questions:
+                        QuizQuestion.objects.create(
+                            concept=concept,
+                            question_data=question_schema.model_dump(),
+                            question_type=QuizQuestion.QuestionType.MULTIPLE_CHOICE,
+                        )
+
+        media_item.processing_step = None
+        media_item.status = MediaItem.Status.COMPLETED
+        media_item.save(update_fields=['processing_step', 'status'])
 
         logger.info(f'Content generation completed for {media_item.title}')
 

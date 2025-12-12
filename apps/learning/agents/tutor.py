@@ -20,9 +20,12 @@ def search_knowledge_base(query: str) -> str:
         return 'No relevant information found in the knowledge base.'
 
     formatted_results = '\n'.join(
-        [f'- {doc.page_content[:200]}...' for doc in results]
+        [
+            f'- [Source: {doc.metadata.get("title", "Unknown")} (ID: {doc.metadata.get("media_item_id")})] {doc.page_content[:300]}...'
+            for doc in results
+        ]
     )
-    return f'Found relevant info:\n{formatted_results}'
+    return f'Found relevant info from knowledge base:\n{formatted_results}'
 
 
 @tool
@@ -38,7 +41,11 @@ def get_study_plan(user_id: int) -> str:
     units_text = '\n'.join(
         [f'{u.order}. {u.concept.title}' for u in plan.units.all()]
     )
-    return f'Current Plan: {plan.title}\nUnits:\n{units_text}'
+    plan_title = plan.media_item.title
+    if plan.topic:
+        plan_title += f' ({plan.topic.title})'
+
+    return f'Current Plan: {plan_title}\nUnits:\n{units_text}'
 
 
 class TutorAgent:
@@ -56,7 +63,6 @@ class TutorAgent:
         settings = ProjectSettings.load()
         self.system_prompt = settings.tutor_prompt
 
-        # Inject Language Instruction
         current_language = translation.get_language()
         self.system_prompt += f"\n\nIMPORTANT: Chat with the user in language code: '{current_language}'."
 
@@ -73,6 +79,11 @@ class TutorAgent:
         history.add_message(user_msg)
 
         messages = history.messages
+
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.info(f'TutorAgent Input Messages: {messages}')
 
         result = self.graph.invoke({'messages': messages})
 
