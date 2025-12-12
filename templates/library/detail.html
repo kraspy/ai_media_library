@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load markdown_extras %}
 
 {% block content %}
 <div class="mx-auto my-4 container-detail">
@@ -28,7 +29,7 @@
     <div class="card bg-dark text-light mb-4 shadow card-custom">
         <div class="card-body">
             <h3 class="mb-3">{% trans "Summary" %}</h3>
-            <div style="line-height: 1.6;">{{ item.summary|linebreaks }}</div>
+            <div class="markdown-body">{{ item.summary|markdown|safe }}</div>
         </div>
     </div>
     {% endif %}
@@ -52,3 +53,4 @@
     {% endif %}
 </div>
 {% endblock %}
+ё
