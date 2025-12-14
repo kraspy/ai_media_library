@@ -48,13 +48,15 @@
                         <div class="card h-100 bg-dark text-light border-secondary">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    {% if plan.topic %}
-                                        {{ plan.topic.title }}
-                                    {% elif plan.media_item %}
-                                        {{ plan.media_item.title }}
-                                    {% else %}
-                                        {% trans "Custom Plan" %}
-                                    {% endif %}
+                                {% if plan.title %}
+                                    {{ plan.title }}
+                                {% elif plan.topic %}
+                                    {{ plan.topic.title }}
+                                {% elif plan.media_item %}
+                                    {{ plan.media_item.title }}
+                                {% else %}
+                                    {% trans "Custom Plan" %}
+                                {% endif %}
                                 </h5>
                                 <p class="card-text text-secondary small">
                                     {% trans "Created" %}: {{ plan.created_at|date:"M d, Y" }}

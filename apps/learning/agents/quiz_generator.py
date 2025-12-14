@@ -13,8 +13,8 @@ class QuizGenerationAgent:
     Agent responsible for generating quiz questions.
     """
 
-    def __init__(self):
-        self.llm = get_llm(temperature=0.4)
+    def __init__(self, llm=None):
+        self.llm = llm or get_llm(temperature=0.2)
         self.parser = PydanticOutputParser(pydantic_object=QuizSchema)
 
     def run(
@@ -60,12 +60,10 @@ class QuizGenerationAgent:
         self,
         concept_title: str,
         concept_description: str,
+        system_prompt: str,
         context_text: str = '',
         topic_context: str = '',
     ) -> QuizSchema:
-        settings = ProjectSettings.load()
-        system_prompt = settings.quiz_generation_prompt
-
         if topic_context:
             system_prompt += f'\n\nContext Topic: {topic_context}'
 

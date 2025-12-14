@@ -111,6 +111,7 @@ class StudyPlan(models.Model):
         choices=Status.choices,
         default=Status.ACTIVE,
     )
+    title = models.CharField(_('Title'), max_length=255, blank=True)
     created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
 
     class Meta:

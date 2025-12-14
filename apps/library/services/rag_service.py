@@ -2,10 +2,10 @@ import logging
 import shutil
 from typing import List
 
-from apps.library.services.embeddings import DeterministicFakeEmbedding
 from django.conf import settings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
+from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 logger = logging.getLogger(__name__)
@@ -22,8 +22,8 @@ class RAGService:
         if cls._instance is None:
             cls._instance = super(RAGService, cls).__new__(cls)
             cls._instance.persist_directory = settings.BASE_DIR / 'chroma_db'
-            cls._instance.embedding_function = DeterministicFakeEmbedding(
-                size=1536
+            cls._instance.embedding_function = OpenAIEmbeddings(
+                api_key=settings.OPENAI_API_KEY
             )
             cls._instance.vector_store = Chroma(
                 persist_directory=str(cls._instance.persist_directory),

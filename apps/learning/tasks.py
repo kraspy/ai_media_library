@@ -6,6 +6,8 @@ from asgiref.sync import async_to_sync
 from celery import shared_task
 from django.db import transaction
 
+from apps.core.models import ProjectSettings
+from apps.learning.agents.base import get_llm
 from apps.learning.models import (
     Concept,
     Flashcard,
@@ -90,6 +92,7 @@ def generate_content_from_media(media_item_id):
                 topic=media_item.topic,
                 media_item=media_item,
                 status=StudyPlan.Status.ACTIVE,
+                title=plan_schema.title,
             )
 
             for unit_schema in plan_schema.units:
@@ -113,6 +116,11 @@ def generate_content_from_media(media_item_id):
         media_item.processing_step = 'Generating Quizzes...'
         media_item.save(update_fields=['processing_step'])
 
+        project_settings = ProjectSettings.load()
+        quiz_system_prompt = project_settings.quiz_generation_prompt
+
+        llm = get_llm(temperature=0.0)
+
         async def _generate_quizzes_concurrently():
             semaphore = asyncio.Semaphore(5)
 
@@ -122,8 +130,10 @@ def generate_content_from_media(media_item_id):
                         quiz_schema = await ai_service.generate_quiz_async(
                             concept_title=concept.title,
                             concept_description=concept.description,
+                            system_prompt=quiz_system_prompt,
                             context_text=text_content[:2000],
                             topic_context=topic_context,
+                            llm=llm,
                         )
                         return concept, quiz_schema
                     except Exception as e:

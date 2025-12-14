@@ -8,7 +8,12 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="text-light mb-1">
-                {% if plan.topic %}
+                {% if plan.title %}
+                    {{ plan.title }}
+                    <div class="text-secondary small h6 mt-1">
+                        {% if plan.topic %}{{ plan.topic.title }}{% else %}{{ plan.media_item.title }}{% endif %}
+                    </div>
+                {% elif plan.topic %}
                     {{ plan.topic.title }}
                 {% elif plan.media_item %}
                     {{ plan.media_item.title }}

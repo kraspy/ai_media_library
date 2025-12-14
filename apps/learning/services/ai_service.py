@@ -45,10 +45,16 @@ class AIService:
         self,
         concept_title: str,
         concept_description: str,
+        system_prompt: str,
         context_text: str = '',
         topic_context: str = '',
+        llm=None,
     ) -> QuizSchema:
-        agent = QuizGenerationAgent()
+        agent = QuizGenerationAgent(llm=llm)
         return await agent.arun(
-            concept_title, concept_description, context_text, topic_context
+            concept_title,
+            concept_description,
+            system_prompt,
+            context_text,
+            topic_context,
         )

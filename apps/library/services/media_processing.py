@@ -35,14 +35,19 @@ def cut_audio_from_video(video_path: Path) -> Path:
         capture_output=True,
     )
 
-    logger.info(f'Converting {m4a_path} to {wav_path} using faad')
+    logger.info(f'Converting {m4a_path} to {wav_path} using ffmpeg')
 
     subprocess.run(
         [
-            'faad',
-            '-o',
-            str(wav_path),
+            'ffmpeg',
+            '-y',
+            '-i',
             str(m4a_path),
+            '-ac',
+            '1',
+            '-ar',
+            '16000',
+            str(wav_path),
         ],
         check=True,
         capture_output=True,

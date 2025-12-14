@@ -55,7 +55,7 @@ class TutorAgent:
     """
 
     def __init__(self):
-        self.llm = get_llm(temperature=0.7)
+        self.llm = get_llm(temperature=0.4)
         self.tools = [search_knowledge_base, get_study_plan]
 
         from apps.core.models import ProjectSettings
