@@ -220,3 +220,6 @@ __marimo__/
 
 # Project files
 media/uploads/*
+
+# chromadb
+chroma_db/

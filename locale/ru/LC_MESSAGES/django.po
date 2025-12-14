@@ -25,7 +25,7 @@ msgstr "Выберите движок транскрипции."
 
 #: apps/core/models.py:20 templates/core/settings.html:14
 msgid "Transcription Engine"
-msgstr "Движок транскрипции"
+msgstr "Модель транскрипции"
 
 #: apps/core/models.py:26
 msgid "Select LLM provider."
@@ -33,7 +33,7 @@ msgstr "Выберите LLM провайдера."
 
 #: apps/core/models.py:27 templates/core/settings.html:18
 msgid "LLM Provider"
-msgstr "LLM Провайдер"
+msgstr "LLM"
 
 #: apps/core/models.py:31
 msgid "System prompt for Summarization."
@@ -41,7 +41,7 @@ msgstr "Системный промпт для саммаризации."
 
 #: apps/core/models.py:32 templates/core/settings.html:26
 msgid "Summarization Prompt"
-msgstr "Промпт для саммаризации"
+msgstr "Промт для саммаризации"
 
 #: apps/core/models.py:44
 msgid "System prompt for Concept Extraction Agent."
@@ -49,7 +49,7 @@ msgstr "Системный промпт для саммаризации."
 
 #: apps/core/models.py:45 templates/core/settings.html:30
 msgid "Concept Extraction Prompt"
-msgstr "Промпт для извлечения концепций"
+msgstr "Промт для извлечения концепций"
 
 #: apps/core/models.py:57
 msgid "System prompt for Study Plan Generation Agent."
@@ -57,7 +57,7 @@ msgstr "Системный промпт для агента генерации �
 
 #: apps/core/models.py:58 templates/core/settings.html:34
 msgid "Plan Generation Prompt"
-msgstr "Промпт для генерации плана"
+msgstr "Промт для генерации плана"
 
 #: apps/core/models.py:70
 msgid "System prompt for Quiz Generation Agent."
@@ -65,7 +65,7 @@ msgstr "Системный промпт для агента генерации �
 
 #: apps/core/models.py:71 templates/core/settings.html:38
 msgid "Quiz Generation Prompt"
-msgstr "Промпт для генерации квиза"
+msgstr "Промт для генерации квиза"
 
 #: apps/core/models.py:84
 msgid "System prompt for Tutor Agent."
@@ -73,7 +73,7 @@ msgstr "Системный промпт для агента-учителя."
 
 #: apps/core/models.py:85 templates/core/settings.html:42
 msgid "Tutor Prompt"
-msgstr "Промпт учителя"
+msgstr "Промт учителя"
 
 #: apps/core/models.py:105 apps/core/models.py:108 apps/core/models.py:109
 #: templates/base.html:20
@@ -466,7 +466,7 @@ msgstr "AI Движки"
 
 #: templates/core/settings.html:24
 msgid "Prompts"
-msgstr "Промпты"
+msgstr "Промты"
 
 #: templates/core/settings.html:47
 msgid "Save Settings"
