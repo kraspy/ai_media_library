@@ -13,38 +13,62 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 </head>
 <body class="bg-dark text-light font-sans min-vh-100 d-flex flex-column">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3 border-bottom border-secondary">
         <div class="container">
-            <div class="navbar-nav me-auto mb-2 mb-lg-0">
-                <a class="nav-link fw-semibold text-light" href="{% url 'library:list' %}">{% trans "Home" %}</a>
-                <a class="nav-link fw-semibold text-light" href="{% url 'core:settings' %}">{% trans "Settings" %}</a>
-                <a class="nav-link fw-semibold text-light" href="/admin/">{% trans "Admin" %}</a>
-                <a class="nav-link fw-semibold text-light" href="{% url 'library:topic_list' %}">{% trans "Topics" %}</a>
-                <a class="nav-link fw-semibold text-light" href="{% url 'learning:dashboard' %}">{% trans "Learning" %}</a>
-                <a class="nav-link fw-semibold text-light" href="{% url 'learning:tutor' %}">{% trans "AI Tutor" %}</a>
-            </div>
-            <div class="d-flex align-items-center">
-                <form action="{% url 'set_language' %}" method="post" class="me-3">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ redirect_to }}">
-                    <select name="language" class="form-select form-select-sm bg-dark text-light border-secondary" onchange="this.form.submit()">
-                        {% get_current_language as LANGUAGE_CODE %}
-                        {% get_available_languages as LANGUAGES %}
-                        {% get_language_info_list for LANGUAGES as languages %}
-                        {% for language in languages %}
-                            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                                {{ language.name_local }} ({{ language.code }})
-                            </option>
-                        {% endfor %}
-                    </select>
-                </form>
+            <a class="navbar-brand fw-bold text-info" href="{% url 'library:list' %}">
+                <i class="bi bi-robot me-2"></i>{% trans "AI Media Library" %}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-light" href="{% url 'library:list' %}">{% trans "Home" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-light" href="{% url 'library:topic_list' %}">{% trans "Topics" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-light" href="{% url 'learning:dashboard' %}">{% trans "Learning" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-light" href="{% url 'learning:tutor' %}">{% trans "AI Tutor" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-light" href="{% url 'core:settings' %}">{% trans "Settings" %}</a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold text-light" href="/admin/">{% trans "Admin" %}</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="d-flex align-items-center flex-column flex-lg-row gap-3 mt-3 mt-lg-0">
+                    <form action="{% url 'set_language' %}" method="post" class="d-flex">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ redirect_to }}">
+                        <select name="language" class="form-select form-select-sm bg-dark text-light border-secondary" onchange="this.form.submit()">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% get_language_info_list for LANGUAGES as languages %}
+                            {% for language in languages %}
+                                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                                    {{ language.name_local }} ({{ language.code }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
 
-                {% if user.is_authenticated %}
-                    <span class="me-2 text-info fw-bold">{% trans "Welcome" %}, {{ user.username }}</span>
-                    <a class="btn btn-secondary me-2" href="{% url 'users:logout' %}">{% trans "Logout" %}</a>
-                {% else %}
-                    <a class="btn btn-info" href="{% url 'users:login' %}">{% trans "Login" %}</a>
-                {% endif %}
+                    {% if user.is_authenticated %}
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-info fw-bold">{% trans "Welcome" %}, {{ user.username }}</span>
+                            <a class="btn btn-secondary btn-sm" href="{% url 'users:logout' %}">{% trans "Logout" %}</a>
+                        </div>
+                    {% else %}
+                        <a class="btn btn-info btn-sm" href="{% url 'users:login' %}">{% trans "Login" %}</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>

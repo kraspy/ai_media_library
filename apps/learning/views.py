@@ -240,6 +240,7 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
 
 class TutorAPIView(LoginRequiredMixin, View):
     def post(self, request):
+        print('DEBUG: TutorAPIView POST request received')
         import json
 
         from django.http import JsonResponse

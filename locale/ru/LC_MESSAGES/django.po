@@ -350,7 +350,7 @@ msgstr "Транскрипция"
 
 #: apps/library/models.py:85 templates/library/detail.html:30
 msgid "Summary"
-msgstr "Сводка"
+msgstr "Саммари (Короткое резюме)"
 
 #: apps/library/models.py:87 templates/library/detail.html:48
 msgid "Error Log"
