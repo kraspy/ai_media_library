@@ -37,15 +37,15 @@ msgstr "LLM Провайдер"
 
 #: apps/core/models.py:31
 msgid "System prompt for Summarization."
-msgstr "Системный промпт для суммаризации."
+msgstr "Системный промпт для саммаризации."
 
 #: apps/core/models.py:32 templates/core/settings.html:26
 msgid "Summarization Prompt"
-msgstr "Промпт для суммаризации"
+msgstr "Промпт для саммаризации"
 
 #: apps/core/models.py:44
 msgid "System prompt for Concept Extraction Agent."
-msgstr "Системный промпт для суммаризации."
+msgstr "Системный промпт для саммаризации."
 
 #: apps/core/models.py:45 templates/core/settings.html:30
 msgid "Concept Extraction Prompt"

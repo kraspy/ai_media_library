@@ -105,16 +105,32 @@ class QuizView(LoginRequiredMixin, DetailView):
         results = []
 
         for question in questions:
-            user_answer = request.POST.get(f'question_{question.id}')
+            user_answer_index_str = request.POST.get(f'question_{question.id}')
 
             options = question.question_data.get('options', [])
             correct_index = question.question_data.get('correct_index')
+
+            user_answer = None
+            is_correct = False
+
+            if (
+                user_answer_index_str is not None
+                and user_answer_index_str.isdigit()
+            ):
+                user_index = int(user_answer_index_str)
+                if 0 <= user_index < len(options):
+                    user_answer = options[user_index]
+                    # Verify correctness by index, robust against string formatting
+                    if correct_index is not None:
+                        is_correct = user_index == correct_index
+
             correct_answer = (
                 options[correct_index]
-                if options and correct_index is not None
+                if options
+                and correct_index is not None
+                and 0 <= correct_index < len(options)
                 else None
             )
-            is_correct = user_answer == correct_answer
 
             if is_correct:
                 score += 1

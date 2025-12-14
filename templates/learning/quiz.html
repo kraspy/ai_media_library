@@ -80,7 +80,7 @@
                                     </div>
                                     {% for option in question.question_data.options %}
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="q{{ question.id }}_opt{{ forloop.counter }}" value="{{ option }}" required>
+                                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="q{{ question.id }}_opt{{ forloop.counter }}" value="{{ forloop.counter0 }}" required>
                                             <label class="form-check-label" for="q{{ question.id }}_opt{{ forloop.counter }}">
                                                 {{ option|markdown|safe }}
                                             </label>
