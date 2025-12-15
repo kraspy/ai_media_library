@@ -7,6 +7,7 @@ import torch
 import whisperx
 from celery import shared_task
 from django.conf import settings
+from django.utils import translation
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from openai import OpenAI
@@ -139,6 +140,9 @@ def summarize_media(media_item_id):
 
         project_settings = ProjectSettings.load()
         system_prompt = project_settings.summarization_prompt
+
+        current_language = translation.get_language()
+        system_prompt += f"\n\nIMPORTANT: Provide all Output in language: '{current_language}'."
 
         if not media_item.transcription:
             logger.warning(f'No transcription found for {media_item.id}')

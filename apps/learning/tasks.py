@@ -4,7 +4,9 @@ import traceback
 
 from asgiref.sync import async_to_sync
 from celery import shared_task
+from django.conf import settings
 from django.db import transaction
+from django.utils import translation
 
 from apps.core.models import ProjectSettings
 from apps.learning.agents.base import get_llm
@@ -33,6 +35,8 @@ def generate_content_from_media(media_item_id):
     try:
         media_item = MediaItem.objects.get(id=media_item_id)
         logger.info(f'Starting content generation for {media_item.title}')
+
+        translation.activate(settings.LANGUAGE_CODE)
 
         media_item.processing_step = 'Extracting Concepts...'
         media_item.status = MediaItem.Status.PROCESSING
