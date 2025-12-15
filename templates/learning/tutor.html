@@ -89,8 +89,8 @@
                                             <i class="bi bi-chat-dots me-2"></i> {% trans "General Chat" %}
                                         </button>
                                         {% for plan in active_plans %}
-                                        <button type="button" class="list-group-item list-group-item-action bg-dark text-light border-secondary context-item" data-type="plan" data-id="{{ plan.id }}" data-label="{{ plan.topic.title|default:plan.media_item.title }}">
-                                            <i class="bi bi-journal-text me-2"></i> {{ plan.topic.title|default:plan.media_item.title }}
+                                        <button type="button" class="list-group-item list-group-item-action bg-dark text-light border-secondary context-item" data-type="plan" data-id="{{ plan.id }}" data-label="{{ plan.title|default:plan.topic.title|default:plan.media_item.title }}">
+                                            <i class="bi bi-journal-text me-2"></i> {{ plan.title|default:plan.topic.title|default:plan.media_item.title }}
                                         </button>
                                         {% endfor %}
                                     </div>
@@ -100,6 +100,7 @@
                                         {% for concept in recent_concepts %}
                                         <button type="button" class="list-group-item list-group-item-action bg-dark text-light border-secondary context-item" data-type="concept" data-id="{{ concept.id }}" data-label="{{ concept.title }}">
                                             <i class="bi bi-lightbulb me-2"></i> {{ concept.title }}
+                                            <small class="text-secondary opacity-75 ms-1">({{ concept.media_item.topic.title|default:concept.media_item.title }})</small>
                                         </button>
                                         {% empty %}
                                             <p class="text-muted p-2">{% trans "No concepts studied recently." %}</p>

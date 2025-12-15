@@ -216,12 +216,17 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
             user=self.request.user
         ).order_by('-updated_at')
 
-        context['active_plans'] = StudyPlan.objects.filter(
-            user=self.request.user, status=StudyPlan.Status.ACTIVE
-        ).order_by('-created_at')[:5]
+        context['active_plans'] = (
+            StudyPlan.objects.filter(
+                user=self.request.user, status=StudyPlan.Status.ACTIVE
+            )
+            .select_related('topic', 'media_item')
+            .order_by('-created_at')[:5]
+        )
 
         context['recent_concepts'] = (
             Concept.objects.filter(study_units__plan__user=self.request.user)
+            .select_related('media_item', 'media_item__topic')
             .distinct()
             .order_by('-created_at')[:20]
         )
