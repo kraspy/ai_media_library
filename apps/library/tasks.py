@@ -9,10 +9,17 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import translation
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_deepseek import ChatDeepSeek
 from langchain_openai import ChatOpenAI
 from openai import OpenAI
 
 from apps.core.models import ProjectSettings
+from apps.learning.tasks import generate_content_from_media
+from apps.library.services.media_processing import (
+    cut_audio_from_video,
+    perform_ocr,
+)
+from apps.library.services.rag_service import RAGService
 
 from .models import MediaItem
 
@@ -38,16 +45,10 @@ def analyze_media(media_item_id):
         audio_path = media_item.file.path
 
         if media_item.media_type == MediaItem.MediaType.VIDEO:
-            from apps.library.services.media_processing import (
-                cut_audio_from_video,
-            )
-
             audio_path = cut_audio_from_video(Path(media_item.file.path))
             logger.info(f'Extracted audio to {audio_path}')
 
         if media_item.media_type == MediaItem.MediaType.IMAGE:
-            from apps.library.services.media_processing import perform_ocr
-
             transcription_text = perform_ocr(Path(media_item.file.path))
 
         elif media_item.media_type == MediaItem.MediaType.TEXT:
@@ -84,18 +85,6 @@ def analyze_media(media_item_id):
                 for segment in result['segments']:
                     transcription_text += segment['text'] + '\n'
 
-            elif engine == ProjectSettings.TranscriptionEngine.T_ONE:
-                from tone import StreamingCTCPipeline, read_audio
-
-                audio = read_audio(str(audio_path))
-                pipeline = StreamingCTCPipeline.from_hugging_face()
-                phrases = pipeline.forward_offline(audio)
-                transcription_text = (
-                    ' '.join([p.text for p in phrases])
-                    if phrases and hasattr(phrases[0], 'text')
-                    else str(phrases)
-                )
-
             elif engine == ProjectSettings.TranscriptionEngine.OPENAI:
                 client = OpenAI(api_key=settings.OPENAI_API_KEY)
                 with open(audio_path, 'rb') as audio_file:
@@ -111,8 +100,6 @@ def analyze_media(media_item_id):
 
         media_item.status = MediaItem.Status.COMPLETED
         media_item.save()
-
-        from apps.library.tasks import summarize_media
 
         summarize_media.delay(media_item.id)
 
@@ -151,8 +138,6 @@ def summarize_media(media_item_id):
         provider = project_settings.llm_provider
 
         if provider == ProjectSettings.LLMProvider.DEEPSEEK:
-            from langchain_deepseek import ChatDeepSeek
-
             llm = ChatDeepSeek(
                 api_key=settings.DEEPSEEK_API_KEY,
                 model=settings.DEEPSEEK_MODEL,
@@ -185,9 +170,6 @@ def summarize_media(media_item_id):
 
         logger.info(f'Summarization completed for {media_item.id}')
 
-        from apps.learning.tasks import generate_content_from_media
-        from apps.library.tasks import index_media
-
         generate_content_from_media.delay(media_item.id)
         index_media.delay(media_item.id)
 
@@ -211,8 +193,6 @@ def index_media(media_item_id):
     try:
         media_item = MediaItem.objects.get(id=media_item_id)
         logger.info(f'Starting RAG indexing for {media_item.id}')
-
-        from apps.library.services.rag_service import RAGService
 
         rag_service = RAGService()
         rag_service.index_media_item(media_item)

@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
@@ -36,8 +37,6 @@ class Topic(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            from django.utils.text import slugify
-
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1

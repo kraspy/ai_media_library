@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import MediaItem, Topic
+from .tasks import analyze_media, summarize_media
 
 
 @admin.register(Topic)
@@ -20,8 +21,6 @@ class MediaItemAdmin(admin.ModelAdmin):
 
     @admin.action(description='Analyze selected items')
     def analyze_selected(self, request, queryset):
-        from .tasks import analyze_media
-
         for item in queryset:
             analyze_media.delay(item.id)
         self.message_user(
@@ -30,8 +29,6 @@ class MediaItemAdmin(admin.ModelAdmin):
 
     @admin.action(description='Summarize selected items')
     def summarize_selected(self, request, queryset):
-        from .tasks import summarize_media
-
         for item in queryset:
             summarize_media.delay(item.id)
         self.message_user(

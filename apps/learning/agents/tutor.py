@@ -1,9 +1,14 @@
+import logging
+
 from django.utils import translation
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
 from langchain_core.tools import tool
 
+from apps.core.models import ProjectSettings
 from apps.learning.history import DjangoChatMessageHistory
+from apps.learning.models import StudyPlan
+from apps.library.services.rag_service import RAGService
 
 from .base import get_llm
 
@@ -11,7 +16,6 @@ from .base import get_llm
 @tool
 def search_knowledge_base(query: str) -> str:
     """Search the knowledge base for relevant information."""
-    from apps.library.services.rag_service import RAGService
 
     service = RAGService()
     results = service.search(query)
@@ -31,7 +35,6 @@ def search_knowledge_base(query: str) -> str:
 @tool
 def get_study_plan(user_id: int) -> str:
     """Get the current active study plan for the user."""
-    from apps.learning.models import StudyPlan
 
     plan = StudyPlan.objects.filter(status=StudyPlan.Status.ACTIVE).last()
 
@@ -58,8 +61,6 @@ class TutorAgent:
         self.llm = get_llm(temperature=0.4)
         self.tools = [search_knowledge_base, get_study_plan]
 
-        from apps.core.models import ProjectSettings
-
         settings = ProjectSettings.load()
         self.system_prompt = settings.tutor_prompt
 
@@ -79,8 +80,6 @@ class TutorAgent:
         history.add_message(user_msg)
 
         messages = history.messages
-
-        import logging
 
         logger = logging.getLogger(__name__)
         logger.info(f'TutorAgent Input Messages: {messages}')

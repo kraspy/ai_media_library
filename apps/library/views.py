@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -57,9 +59,6 @@ class MediaUploadView(CreateView):
             'md',
         ]
 
-        from django.contrib import messages
-        from django.utils.translation import gettext as _
-
         for f in files:
             ext = f.name.lower().split('.')[-1]
             if ext not in supported_extensions:
@@ -97,15 +96,9 @@ class MediaUploadView(CreateView):
             if tags:
                 instance.tags.set(tags)
 
-            from .tasks import (
-                analyze_media,
-            )
-
             try:
                 analyze_media.delay(instance.id)
             except Exception as e:
-                import logging
-
                 logger = logging.getLogger(__name__)
                 logger.error(
                     f'Failed to schedule analysis for {instance.id}: {e}'
@@ -146,13 +139,9 @@ class MediaBulkActionView(LoginRequiredMixin, View):
         queryset = MediaItem.objects.filter(id__in=media_ids)
 
         if action == 'delete':
-            count = queryset.count()
             queryset.delete()
 
         elif action == 'reanalyze':
-            from django.contrib import messages
-            from django.utils.translation import gettext as _
-
             error_count = 0
             for item in queryset:
                 item.status = MediaItem.Status.PENDING

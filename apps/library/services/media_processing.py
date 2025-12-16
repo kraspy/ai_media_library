@@ -3,7 +3,6 @@ import subprocess
 from pathlib import Path
 
 import pytesseract
-from django.conf import settings
 from PIL import Image
 
 logger = logging.getLogger(__name__)

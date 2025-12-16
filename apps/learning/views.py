@@ -1,12 +1,22 @@
+import json
+
 import django.contrib.auth.decorators
 import django.views.decorators.http
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.generic import DetailView, TemplateView, View
 
-from apps.learning.models import Flashcard, StudyPlan, StudyUnit
+from apps.learning.agents.tutor import TutorAgent
+from apps.learning.models import (
+    Concept,
+    Flashcard,
+    StudyPlan,
+    StudyUnit,
+    TutorChatSession,
+)
 from apps.learning.services.srs import calculate_next_review
 
 
@@ -185,7 +195,6 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        from apps.learning.models import Concept, StudyPlan, TutorChatSession
 
         if self.kwargs.get('create_new'):
             session = TutorChatSession.objects.create(
@@ -252,8 +261,6 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         if kwargs.get('create_new'):
-            from apps.learning.models import TutorChatSession
-
             session = TutorChatSession.objects.create(user=request.user)
             return redirect('learning:tutor_session', pk=session.id)
         return super().get(request, *args, **kwargs)
@@ -262,12 +269,6 @@ class TutorChatView(LoginRequiredMixin, TemplateView):
 class TutorAPIView(LoginRequiredMixin, View):
     def post(self, request):
         print('DEBUG: TutorAPIView POST request received')
-        import json
-
-        from django.http import JsonResponse
-
-        from apps.learning.agents.tutor import TutorAgent
-        from apps.learning.models import TutorChatSession
 
         try:
             data = json.loads(request.body)
@@ -285,8 +286,6 @@ class TutorAPIView(LoginRequiredMixin, View):
             context_text = ''
 
             if context_type and context_id:
-                from apps.learning.models import Concept, StudyPlan
-
                 try:
                     if context_type == 'plan':
                         plan = StudyPlan.objects.get(
@@ -322,12 +321,6 @@ class TutorAPIView(LoginRequiredMixin, View):
 
 class TutorContextUpdateView(LoginRequiredMixin, View):
     def post(self, request):
-        import json
-
-        from django.http import JsonResponse
-
-        from apps.learning.models import Concept, StudyPlan, TutorChatSession
-
         try:
             data = json.loads(request.body)
             session_id = data.get('session_id')
@@ -372,8 +365,6 @@ class TutorContextUpdateView(LoginRequiredMixin, View):
 @django.views.decorators.http.require_POST
 @django.contrib.auth.decorators.login_required
 def delete_tutor_session(request, pk):
-    from apps.learning.models import TutorChatSession
-
     session = get_object_or_404(TutorChatSession, id=pk, user=request.user)
     session.delete()
     return redirect('learning:tutor')
